@@ -16,21 +16,21 @@ jobs:
     name: Unit Tests
     strategy:
         matrix:
-          os: [ubuntu-22.04, windows-2022, macos-14]
+          os: [ubuntu-latest, windows-2022, macos-14]
 
     runs-on: ${{ matrix.os }}
 
     steps:
 
       - name: Fetch Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           persist-credentials: false
 
       - name: Install Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22.14.0
+          node-version: 24
           cache: 'npm'
 
       - name: Install Modules
