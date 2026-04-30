@@ -3,10 +3,39 @@
 #define NODE_ADDON_API_DISABLE_DEPRECATED
 #define NAPI_DISABLE_CPP_EXCEPTIONS
 #include <napi.h>
+#include <cstring>
 
 
 #ifdef _WIN32
-	#define strcasestr(s, t) strstr(strupr(s), strupr(t))
+#include <string.h>
+inline const char* strcasestr_crossplatform(
+	const char *haystack,
+	const char *needle
+) {
+	if (!haystack || !needle) {
+		return nullptr;
+	}
+	if (*needle == '\0') {
+		return haystack;
+	}
+	
+	for (const char *h = haystack; *h != '\0'; ++h) {
+		const char *hs = h;
+		const char *ns = needle;
+		while (*hs != '\0' && *ns != '\0' && _strnicmp(hs, ns, 1) == 0) {
+			++hs;
+			++ns;
+		}
+		if (*ns == '\0') {
+			return h;
+		}
+	}
+	
+	return nullptr;
+}
+#else
+#include <strings.h>
+#define strcasestr_crossplatform strcasestr
 #endif
 
 
@@ -124,6 +153,36 @@
 #define LET_UINT_ARG(I, VAR) LET_UINT32_ARG(I, VAR)
 
 
+#define REQ_INT64_ARG(I, VAR)                                                 \
+	CHECK_REQ_ARG(I, IsNumber(), "Int64");                                    \
+	int64_t VAR = info[I].As<Napi::Number>().Int64Value();
+
+#define USE_INT64_ARG(I, VAR, DEF)                                            \
+	CHECK_LET_ARG(I, IsNumber(), "Int64");                                    \
+	int64_t VAR = IS_ARG_EMPTY(I) ? (DEF) : info[I].As<Napi::Number>().Int64Value();
+
+#define WEAK_INT64_ARG(I, VAR)                                                \
+	int64_t VAR = info[I].ToNumber().Int64Value();
+
+#define LET_INT64_ARG(I, VAR) USE_INT64_ARG(I, VAR, 0)
+
+
+#define REQ_UINT64_ARG(I, VAR)                                                \
+	CHECK_REQ_ARG(I, IsNumber(), "Uint64");                                   \
+	uint64_t VAR = static_cast<uint64_t>(info[I].As<Napi::Number>().Int64Value());
+
+#define USE_UINT64_ARG(I, VAR, DEF)                                           \
+	CHECK_LET_ARG(I, IsNumber(), "Uint64");                                   \
+	uint64_t VAR = IS_ARG_EMPTY(I)                                            \
+		? (DEF)                                                               \
+		: static_cast<uint64_t>(info[I].As<Napi::Number>().Int64Value());
+
+#define WEAK_UINT64_ARG(I, VAR)                                               \
+	uint64_t VAR = static_cast<uint64_t>(info[I].ToNumber().Int64Value());
+
+#define LET_UINT64_ARG(I, VAR) USE_UINT64_ARG(I, VAR, 0)
+
+
 #define REQ_BOOL_ARG(I, VAR)                                                  \
 	CHECK_REQ_ARG(I, IsBoolean(), "Bool");                                    \
 	bool VAR = info[I].As<Napi::Boolean>().Value();
@@ -143,16 +202,16 @@
 
 #define REQ_OFFS_ARG(I, VAR)                                                  \
 	CHECK_REQ_ARG(I, IsNumber(), "Number");                                   \
-	int64_t VAR = info[I].As<Napi::Number>().Int64Value();
+	size_t VAR = static_cast<size_t>(info[I].As<Napi::Number>().Int64Value());
 
 #define USE_OFFS_ARG(I, VAR, DEF)                                             \
 	CHECK_LET_ARG(I, IsNumber(), "Number");                                   \
-	int64_t VAR = IS_ARG_EMPTY(I)                                              \
+	size_t VAR = IS_ARG_EMPTY(I)                                              \
 		? (DEF)                                                               \
-		: info[I].As<Napi::Number>().Int64Value();
+		: static_cast<size_t>(info[I].As<Napi::Number>().Int64Value());
 
 #define WEAK_OFFS_ARG(I, VAR)                                                 \
-	int64_t VAR = info[I].ToNumber().Int64Value();
+	size_t VAR = static_cast<size_t>(info[I].ToNumber().Int64Value());
 
 #define LET_OFFS_ARG(I, VAR) USE_OFFS_ARG(I, VAR, 0)
 
@@ -332,9 +391,17 @@ inline Napi::Array vecStrToArray(Napi::Env env, const std::vector<std::string> &
 
 #define SETTER_UINT_ARG SETTER_UINT32_ARG
 
+#define SETTER_INT64_ARG                                                      \
+	SETTER_CHECK(IsNumber(), "Int64");                                        \
+	int64_t v = value.As<Napi::Number>().Int64Value();
+
+#define SETTER_UINT64_ARG                                                     \
+	SETTER_CHECK(IsNumber(), "Uint64");                                       \
+	uint64_t v = static_cast<uint64_t>(value.As<Napi::Number>().Int64Value());
+
 #define SETTER_OFFS_ARG                                                       \
 	SETTER_CHECK(IsNumber(), "Number");                                       \
-	int64_t v = value.As<Napi::Number>().Int64Value();
+	size_t v = static_cast<size_t>(value.As<Napi::Number>().Int64Value());
 
 #define SETTER_DOUBLE_ARG                                                     \
 	SETTER_CHECK(IsNumber(), "Number");                                       \
@@ -346,7 +413,7 @@ inline Napi::Array vecStrToArray(Napi::Env env, const std::vector<std::string> &
 
 #define SETTER_EXT_ARG                                                        \
 	SETTER_CHECK(IsExternal(), "Pointer");                                    \
-	Napi::External v = value.As<Napi::External>();
+	void *v = value.As< Napi::External<void> >().Data();
 
 #define SETTER_FUN_ARG                                                        \
 	SETTER_CHECK(IsFunction(), "Function");                                   \
@@ -393,32 +460,66 @@ inline Napi::Array vecStrToArray(Napi::Env env, const std::vector<std::string> &
 
 
 template<typename Type = uint8_t>
-inline Type* getArrayData(
+inline const Type* getArrayData(
 	Napi::Env env,
 	Napi::Object obj,
 	int32_t *num = nullptr
 ) {
-	Type *out = nullptr;
+	const Type *out = nullptr;
+	if (num) {
+		*num = 0;
+	}
 	
 	if (obj.IsTypedArray()) {
 		Napi::TypedArray ta = obj.As<Napi::TypedArray>();
 		size_t offset = ta.ByteOffset();
+		size_t byteLength = ta.ByteLength();
 		Napi::ArrayBuffer arr = ta.ArrayBuffer();
-		if (num) {
-			*num = ta.ByteLength() / sizeof(Type);
+		if (byteLength > 0 && byteLength < sizeof(Type)) {
+			JS_THROW("Array data does not contain a complete item of the requested type.");
+			return nullptr;
 		}
-		uint8_t *base = reinterpret_cast<uint8_t *>(arr.Data());
-		out = reinterpret_cast<Type *>(base + offset);
+		if ((byteLength % sizeof(Type)) != 0) {
+			JS_THROW("Array byte length must be a multiple of the requested type size.");
+			return nullptr;
+		}
+		const uint8_t *base = reinterpret_cast<const uint8_t *>(arr.Data());
+		const uint8_t *raw = base == nullptr ? nullptr : base + offset;
+		if (
+			raw != nullptr &&
+			(reinterpret_cast<uintptr_t>(raw) % alignof(Type)) != 0
+		) {
+			JS_THROW("Array data is not properly aligned for the requested type.");
+			return nullptr;
+		}
+		if (num) {
+			*num = static_cast<int32_t>(byteLength / sizeof(Type));
+		}
+		out = reinterpret_cast<const Type *>(raw);
 	} else if (obj.IsArrayBuffer()) {
 		Napi::ArrayBuffer arr = obj.As<Napi::ArrayBuffer>();
-		if (num) {
-			*num = arr.ByteLength() / sizeof(Type);
+		size_t byteLength = arr.ByteLength();
+		if (byteLength > 0 && byteLength < sizeof(Type)) {
+			JS_THROW("Array data does not contain a complete item of the requested type.");
+			return nullptr;
 		}
-		out = reinterpret_cast<Type *>(arr.Data());
+		if ((byteLength % sizeof(Type)) != 0) {
+			JS_THROW("Array byte length must be a multiple of the requested type size.");
+			return nullptr;
+		}
+		const void *raw = arr.Data();
+		if (
+			raw != nullptr &&
+			(reinterpret_cast<uintptr_t>(raw) % alignof(Type)) != 0
+		) {
+			JS_THROW("Array data is not properly aligned for the requested type.");
+			return nullptr;
+		}
+		if (num) {
+			*num = static_cast<int32_t>(byteLength / sizeof(Type));
+		}
+		out = reinterpret_cast<const Type *>(raw);
 	} else {
-		if (num) {
-			*num = 0;
-		}
 		JS_THROW("Argument must be of type `TypedArray`.");
 	}
 	
@@ -427,45 +528,90 @@ inline Type* getArrayData(
 
 
 template<typename Type = uint8_t>
-inline Type* getBufferData(
+inline const Type* getBufferData(
 	Napi::Env env,
 	Napi::Object obj,
 	int32_t *num = nullptr
 ) {
-	Type *out = nullptr;
-	
 	if (num) {
 		*num = 0;
 	}
 	
 	if (!obj.IsBuffer()) {
 		JS_THROW("Argument must be of type `Buffer`.");
-		return out;
+		return nullptr;
 	}
 	
 	Napi::Buffer<uint8_t> arr = obj.As< Napi::Buffer<uint8_t> >();
-	if (num) {
-		*num = arr.Length() / sizeof(Type);
+	size_t byteLength = arr.Length();
+	if (byteLength > 0 && byteLength < sizeof(Type)) {
+		JS_THROW("Buffer does not contain a complete item of the requested type.");
+		return nullptr;
 	}
-	out = arr.Data();
-	
-	return out;
+	if ((byteLength % sizeof(Type)) != 0) {
+		JS_THROW("Buffer byte length must be a multiple of the requested type size.");
+		return nullptr;
+	}
+	const uint8_t *raw = arr.Data();
+	if (
+		raw != nullptr &&
+		(reinterpret_cast<uintptr_t>(raw) % alignof(Type)) != 0
+	) {
+		JS_THROW("Buffer data is not properly aligned for the requested type.");
+		return nullptr;
+	}
+	if (num) {
+		*num = static_cast<int32_t>(byteLength / sizeof(Type));
+	}
+	return reinterpret_cast<const Type*>(raw);
 }
 
 
-inline void *getData(Napi::Env env, Napi::Object obj) {
-	void *out = nullptr;
+inline const void *getData(Napi::Env env, Napi::Object obj) {
+	const void *out = nullptr;
 	
 	if (obj.IsTypedArray() || obj.IsArrayBuffer()) {
 		out = getArrayData<uint8_t>(env, obj);
 	} else if (obj.IsBuffer()) {
 		out = getBufferData<uint8_t>(env, obj);
-	} else if (obj.Has("data")) {
-		Napi::Object data = obj.Get("data").As<Napi::Object>();
-		if (data.IsTypedArray() || data.IsArrayBuffer()) {
-			out = getArrayData<uint8_t>(env, data);
-		} else if (data.IsBuffer()) {
-			out = getBufferData<uint8_t>(env, data);
+	} else {
+		bool hasData = false;
+		napi_status hasStatus = napi_has_named_property(
+			env, obj, "data", &hasData
+		);
+		if (hasStatus != napi_ok) {
+			if (env.IsExceptionPending()) {
+				env.GetAndClearPendingException();
+			}
+			return nullptr;
+		}
+		if (!hasData) {
+			return nullptr;
+		}
+		
+		napi_value rawData;
+		napi_status getStatus = napi_get_named_property(
+			env, obj, "data", &rawData
+		);
+		if (getStatus != napi_ok) {
+			if (env.IsExceptionPending()) {
+				env.GetAndClearPendingException();
+			}
+			return nullptr;
+		}
+		
+		Napi::Value dataValue(env, rawData);
+		if (
+			dataValue.IsTypedArray() ||
+			dataValue.IsArrayBuffer() ||
+			dataValue.IsBuffer()
+		) {
+			Napi::Object data = dataValue.As<Napi::Object>();
+			if (data.IsTypedArray() || data.IsArrayBuffer()) {
+				out = getArrayData<uint8_t>(env, data);
+			} else if (data.IsBuffer()) {
+				out = getBufferData<uint8_t>(env, data);
+			}
 		}
 	}
 	
@@ -563,7 +709,7 @@ typedef void (*Es5SetterCallback)(const Napi::CallbackInfo& info);
 #define DECLARE_ES5_CLASS(CLASS, NAME)                                        \
 public:                                                                       \
 	inline static CLASS *unwrap(Napi::Object thatObj) {                       \
-		CLASS *that;                                                          \
+		CLASS *that = nullptr;                                                \
 		napi_status ns = napi_unwrap(                                         \
 			thatObj.Env(),                                                    \
 			thatObj.Get(_nameEs5),                                            \
@@ -575,6 +721,18 @@ public:                                                                       \
 		return that;                                                          \
 	}                                                                         \
 private:                                                                      \
+	inline static CLASS *unwrapChecked(                                       \
+		const Napi::CallbackInfo &info                                        \
+	) {                                                                       \
+		CLASS *that = unwrap(info.This().As<Napi::Object>());                 \
+		if (that == nullptr) {                                                \
+			Napi::TypeError::New(                                             \
+				info.Env(),                                                   \
+				"Invalid `this` for `" #CLASS "`"                             \
+			).ThrowAsJavaScriptException();                                   \
+		}                                                                     \
+		return that;                                                          \
+	}                                                                         \
 	static Napi::FunctionReference _ctorEs5;                                  \
 	static const char *_nameEs5;                                              \
 	static void _finalizeEs5(napi_env e, void *dest, void* hint);             \
@@ -619,8 +777,8 @@ private:                                                                      \
 		const char *name,                                                     \
 		Es5MethodCallback cb                                                  \
 	) {                                                                       \
-		Napi::Function proto = (                                              \
-			_ctorEs5.Value().Get("prototype").As<Napi::Function>()            \
+		Napi::Object proto = (                                                \
+			_ctorEs5.Value().Get("prototype").As<Napi::Object>()              \
 		);                                                                    \
 		proto.DefineProperty(                                                 \
 			Napi::PropertyDescriptor::Function(                               \
@@ -632,8 +790,8 @@ private:                                                                      \
 		const char *name,                                                     \
 		Es5GetterCallback getter                                              \
 	) {                                                                       \
-		Napi::Function proto = (                                              \
-			_ctorEs5.Value().Get("prototype").As<Napi::Function>()            \
+		Napi::Object proto = (                                                \
+			_ctorEs5.Value().Get("prototype").As<Napi::Object>()              \
 		);                                                                    \
 		proto.DefineProperty(                                                 \
 			Napi::PropertyDescriptor::Accessor(                               \
@@ -646,8 +804,8 @@ private:                                                                      \
 		Es5GetterCallback getter,                                             \
 		Es5SetterCallback setter                                              \
 	) {                                                                       \
-		Napi::Function proto = (                                              \
-			_ctorEs5.Value().Get("prototype").As<Napi::Function>()            \
+		Napi::Object proto = (                                                \
+			_ctorEs5.Value().Get("prototype").As<Napi::Object>()              \
 		);                                                                    \
 		proto.DefineProperty(                                                 \
 			Napi::PropertyDescriptor::Accessor(                               \
@@ -661,12 +819,12 @@ private:                                                                      \
 	}
 
 
-#define JS_GET_THAT(CLASS)                                                    \
-	CLASS *that = CLASS::unwrap(info.This().As<Napi::Object>());
-
 #define JS_DECLARE_METHOD(CLASS, NAME)                                        \
 	inline static JS_METHOD(__st_##NAME) {                                    \
-		JS_GET_THAT(CLASS);                                                   \
+		CLASS *that = CLASS::unwrapChecked(info);                             \
+		if (that == nullptr) {                                                \
+			return info.Env().Undefined();                                    \
+		}                                                                     \
 		return that->__i_##NAME(info);                                        \
 	};                                                                        \
 	JS_METHOD(__i_##NAME);
@@ -677,7 +835,10 @@ private:                                                                      \
 	inline static void __st_##NAME##Setter(                                   \
 		const Napi::CallbackInfo &info                                        \
 	) {                                                                       \
-		JS_GET_THAT(CLASS);                                                   \
+		CLASS *that = CLASS::unwrapChecked(info);                             \
+		if (that == nullptr) {                                                \
+			return;                                                           \
+		}                                                                     \
 		that->__i_##NAME##Setter(info, info[0]);                              \
 	}                                                                         \
 	Napi::Value __i_##NAME##Setter(                                           \

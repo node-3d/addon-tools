@@ -37,6 +37,12 @@ describe('AT / HPP / REQ_OFFS_ARG', () => {
 	it('accepts a number', () => {
 		assert.strictEqual(test.reqOffsArg(55), 55);
 	});
+	it('accepts a negative number and converts it to size_t', () => {
+		assert.ok(test.reqOffsArg(-1) > 0);
+	});
+	it('accepts a fractional number and truncates through numeric conversion', () => {
+		assert.strictEqual(test.reqOffsArg(1.5), 1);
+	});
 });
 
 describe('addon-tools.hpp: LET_OFFS_ARG', () => {
@@ -66,6 +72,12 @@ describe('addon-tools.hpp: LET_OFFS_ARG', () => {
 	});
 	it('accepts a number', () => {
 		assert.strictEqual(test.letOffsArg(55), 55);
+	});
+	it('accepts a negative number and converts it to size_t', () => {
+		assert.ok(test.letOffsArg(-1) > 0);
+	});
+	it('accepts a fractional number and truncates through numeric conversion', () => {
+		assert.strictEqual(test.letOffsArg(1.5), 1);
 	});
 });
 
@@ -97,6 +109,12 @@ describe('addon-tools.hpp: USE_OFFS_ARG', () => {
 	it('accepts a number', () => {
 		assert.strictEqual(test.useOffsArg(55), 55);
 	});
+	it('accepts a negative number and converts it to size_t', () => {
+		assert.ok(test.useOffsArg(-1) > 0);
+	});
+	it('accepts a fractional number and truncates through numeric conversion', () => {
+		assert.strictEqual(test.useOffsArg(1.5), 1);
+	});
 });
 
 describe('addon-tools.hpp: WEAK_OFFS_ARG', () => {
@@ -126,5 +144,8 @@ describe('addon-tools.hpp: WEAK_OFFS_ARG', () => {
 	});
 	it('accepts a boolean', () => {
 		assert.strictEqual(test.weakOffsArg(true), 1);
+	});
+	it('accepts a fractional number and truncates through numeric conversion', () => {
+		assert.strictEqual(test.weakOffsArg(1.5), 1);
 	});
 });

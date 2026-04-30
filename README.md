@@ -39,6 +39,8 @@ DBG_EXPORT JS_METHOD(doSomething) { NAPI_ENV;
 ```
 
 Also, ES5 class helpers allow exporting a JS class directly from C++:
+generated wrappers validate the JS receiver before dispatching to the native
+instance, while exposing `unwrap()` for lower-level manual probing.
 
 ```cpp
 // hpp:

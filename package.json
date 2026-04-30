@@ -1,7 +1,7 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "addon-tools-raub",
-	"version": "9.3.0",
+	"version": "10.0.0",
 	"description": "Helpers for Node.js addons and dependency packages",
 	"license": "MIT",
 	"main": "index.js",
@@ -26,8 +26,8 @@
 		"package.json"
 	],
 	"engines": {
-		"node": ">=22.14.0",
-		"npm": ">=10.9.2"
+		"node": ">=24.13.0",
+		"npm": ">=11.6.2"
 	},
 	"scripts": {
 		"lint": "oxlint .",
@@ -48,9 +48,9 @@
 		}
 	},
 	"devDependencies": {
-		"@types/node": "^22.13.4",
+		"@types/node": "^24.1.0",
 		"node-addon-api": "^8.7.0",
-		"oxlint": "^1.60.0",
-		"typescript": "^6.0.2"
+		"oxlint": "^1.61.0",
+		"typescript": "^6.0.3"
 	}
 }

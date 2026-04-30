@@ -119,6 +119,12 @@ Three types of argument retrieval are supported:
 * `SOFT_` - 2 params, is `LET_` without type and arity checks.
 * `WEAK_` - 2 params, uses type coercion, doesn't check if arg exists.
 
+Numeric helpers are intentionally lightweight. If the JS argument passes the
+macro's type check, the helper performs the corresponding `Napi::Number`
+conversion and stores the result in the requested C++ type. Additional rules
+such as fractional rejection, signedness constraints, or full 64-bit JS range
+validation are left to the caller.
+
 What it does, basically:
 
 ```cpp
@@ -164,6 +170,14 @@ That extrapolates well to all the helpers below:
 | `USE_UINT_ARG`   | `number`      | `uint32_t`              | -         |
 | `WEAK_UINT_ARG`  | `number`      | `uint32_t`              | -         |
 | `LET_UINT_ARG`   | `number`      | `uint32_t`              | `0`       |
+| `REQ_INT64_ARG`  | `number`      | `int64_t`               | -         |
+| `USE_INT64_ARG`  | `number`      | `int64_t`               | -         |
+| `WEAK_INT64_ARG` | `number`      | `int64_t`               | -         |
+| `LET_INT64_ARG`  | `number`      | `int64_t`               | `0`       |
+| `REQ_UINT64_ARG` | `number`      | `uint64_t`              | -         |
+| `USE_UINT64_ARG` | `number`      | `uint64_t`              | -         |
+| `WEAK_UINT64_ARG`| `number`      | `uint64_t`              | -         |
+| `LET_UINT64_ARG` | `number`      | `uint64_t`              | `0`       |
 | `REQ_BOOL_ARG`   | `Boolean`     | `bool`                  | -         |
 | `USE_BOOL_ARG`   | `Boolean`     | `bool`                  | -         |
 | `WEAK_BOOL_ARG`  | `Boolean`     | `bool`                  | -         |
@@ -219,6 +233,8 @@ argument, from which a C++ value is extracted.
 * `SETTER_BOOL_ARG`
 * `SETTER_UINT32_ARG`
 * `SETTER_UINT_ARG`
+* `SETTER_INT64_ARG`
+* `SETTER_UINT64_ARG`
 * `SETTER_OFFS_ARG`
 * `SETTER_DOUBLE_ARG`
 * `SETTER_FLOAT_ARG`
@@ -239,15 +255,18 @@ See also: [Class Wrapping](class-wrapping.md)
 
 **JS Data to C++ Data**
 
-* `T *getArrayData(env, obj, num = NULL)` - extracts TypedArray data of any type from
+* `const T *getArrayData(env, obj, num = NULL)` - extracts TypedArray data of any type from
 the given JS object. Does not accept `Array`. Checks with `IsArrayBuffer()`.
+The byte length must contain complete `T` items and the data pointer must be
+properly aligned for `T`. Returns `nullptr` for empty JS values. For unacceptable
+values throws TypeError.
+
+* `const T *getBufferData(env, obj, num = NULL)` - extracts Buffer data from
+the given JS object. Checks with `IsBuffer()`. The byte length must contain
+complete `T` items and the data pointer must be properly aligned for `T`.
 Returns `nullptr` for empty JS values. For unacceptable values throws TypeError.
 
-* `T *getBufferData(env, obj, num = NULL)` - extracts Buffer data from
-the given JS object. Checks with `IsBuffer()`.
-Returns `nullptr` for empty JS values. For unacceptable values throws TypeError.
-
-* `void *getData(env, obj)` - if `obj` is a `TypedArray|Buffer`,
+* `const void *getData(env, obj)` - if `obj` is a `TypedArray|Buffer`,
 calls `getArrayData` or `getBufferData` on it. Otherwise, if 
 `obj.data` is a `TypedArray|Buffer`,
 calls `getArrayData` or `getBufferData` on it.
@@ -257,4 +276,6 @@ Returns `nullptr` in other cases.
 ### ES5 Classes
 
 Addon Tools provides C++ macro helpers for ES5 Classes (`function`-based).
+The generated wrappers validate `this` before forwarding calls, while the
+public class helper exposes a low-level `unwrap()` probe for manual use.
 See the [class-wrapping doc here](class-wrapping.md).

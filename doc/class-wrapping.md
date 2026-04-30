@@ -45,6 +45,16 @@ the second is the name of the getter to be created.
 * `JS_DECLARE_SETTER` - declares a setter, the first argument is this class,
 the second is the name of the setter to be created.
 
+`DECLARE_ES5_CLASS` also generates a public receiver helper:
+
+* `unwrap(obj)` - low-level unwrap helper. It tries to fetch the native C++
+instance from a JS object and returns `nullptr` if the object is not a valid
+instance of this ES5 wrapper.
+
+Generated method and setter trampolines perform their own checked unwrap
+internally, so detached calls such as `proto.method.call({})` fail as JS
+exceptions instead of crashing the process.
+
 
 ## Class Implementation
 
@@ -101,3 +111,7 @@ the second is the name of the method being implemented.
 the second is the name of the getter being implemented.
 * `JS_IMPLEMENT_SETTER` - implements a setter, the first argument is this class,
 the second is the name of the setter being implemented.
+
+In normal `JS_DECLARE_METHOD` / getter / setter usage you do not need to call
+`unwrap()` manually. The generated static trampolines validate and unwrap
+`this` before forwarding to the `__i_*` instance method.
