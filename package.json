@@ -1,10 +1,21 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
-	"name": "addon-tools-raub",
-	"version": "10.0.0",
+	"name": "@node-3d/addon-tools",
+	"version": "11.0.0",
 	"description": "Helpers for Node.js addons and dependency packages",
 	"license": "MIT",
-	"main": "index.js",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"default": "./dist/index.js"
+		},
+		"./oxlint": {
+			"types": "./ts/utils/oxlint.ts",
+			"default": "./ts/utils/oxlint.ts"
+		}
+	},
 	"keywords": [
 		"headers",
 		"include",
@@ -18,11 +29,12 @@
 		"gyp"
 	],
 	"files": [
+		"dist",
+		"ts/utils/oxlint.ts",
 		"include",
-		"index.js",
-		"index.d.ts",
 		"utils",
 		"LICENSE",
+		"tsconfig.json",
 		"package.json"
 	],
 	"engines": {
@@ -30,14 +42,20 @@
 		"npm": ">=11.6.2"
 	},
 	"scripts": {
-		"lint": "oxlint .",
-		"test": "node --test --watch",
-		"test-ci": "node --test",
-		"build-test": "cd test-addon && node-gyp rebuild -j max --silent"
+		"build:ci": "rslib build",
+		"build:watch": "rslib build --watch",
+		"build:test-addon": "cd test-addon && node-gyp rebuild -j max --silent",
+		"lint:ts": "tsgo -p tsconfig.test.json --noEmit",
+		"lint:oxlint": "oxlint .",
+		"lint:all": "npm run lint:ts && npm run lint:oxlint",
+		"prepare": "npm run build:ci",
+		"test:watch": "node --test --watch \"tests/**/*.test.ts\"",
+		"test:ci": "node --test \"tests/**/*.test.ts\"",
+		"test:test-addon": "npm run build:test-addon && node --test \"test-addon/**/*.test.ts\""
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/node-3d/addon-tools-raub.git"
+		"url": "https://github.com/node-3d/addon-tools.git"
 	},
 	"peerDependencies": {
 		"node-addon-api": "^8.7.0"
@@ -48,9 +66,19 @@
 		}
 	},
 	"devDependencies": {
+		"@rslib/core": "^0.21.3",
 		"@types/node": "^24.1.0",
+		"@typescript/native-preview": "^7.0.0-dev.20260503.1",
 		"node-addon-api": "^8.7.0",
-		"oxlint": "^1.61.0",
+		"oxlint": "^1.65.0",
 		"typescript": "^6.0.3"
+	},
+	"type": "module",
+	"bugs": {
+		"url": "https://github.com/node-3d/node-3d/issues"
+	},
+	"homepage": "https://github.com/node-3d/node-3d#readme",
+	"publishConfig": {
+		"access": "public"
 	}
 }

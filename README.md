@@ -2,13 +2,13 @@
 
 This is a part of [Node3D](https://github.com/node-3d) project.
 
-[![NPM](https://badge.fury.io/js/addon-tools-raub.svg)](https://badge.fury.io/js/addon-tools-raub)
-[![Lint](https://github.com/node-3d/addon-tools-raub/actions/workflows/lint.yml/badge.svg)](https://github.com/node-3d/addon-tools-raub/actions/workflows/lint.yml)
-[![Test](https://github.com/node-3d/addon-tools-raub/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/addon-tools-raub/actions/workflows/test.yml)
-[![Cpplint](https://github.com/node-3d/addon-tools-raub/actions/workflows/cpplint.yml/badge.svg)](https://github.com/node-3d/addon-tools-raub/actions/workflows/cpplint.yml)
+[![NPM](https://badge.fury.io/js/%40node-3d%2Faddon-tools.svg)](https://badge.fury.io/js/@node-3d/addon-tools)
+[![Lint](https://github.com/node-3d/addon-tools/actions/workflows/lint.yml/badge.svg)](https://github.com/node-3d/addon-tools/actions/workflows/lint.yml)
+[![Test](https://github.com/node-3d/addon-tools/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/addon-tools/actions/workflows/test.yml)
+[![Cpplint](https://github.com/node-3d/addon-tools/actions/workflows/cpplint.yml/badge.svg)](https://github.com/node-3d/addon-tools/actions/workflows/cpplint.yml)
 
 ```console
-npm i -s addon-tools-raub
+npm install @node-3d/addon-tools
 ```
 
 Addon Tools provide build-time and run-time helpers for Node.js C++ addons.
@@ -102,7 +102,7 @@ NODE_API_MODULE(myaddon, init)
 Get the platform-specific directory name to import the `ADDON.node` file.
 
 ```js
-	const { getBin } = require('addon-tools-raub');
+	const { getBin } = require('@node-3d/addon-tools');
 	const core = require(`./${getBin()}/ADDON`);
 ```
 
@@ -114,7 +114,7 @@ and Addon API header:
 
 ```gyp
 	'include_dirs': [
-		'<!@(node -p "require(\'addon-tools-raub\').getInclude()")',
+		'<!@(node -p "require(\'@node-3d/addon-tools\').getInclude()")',
 	],
 ```
 
@@ -126,9 +126,9 @@ Using helpers for paths to dependency libs and own binaries:
 
 ```gyp
 	'variables': {
-		'bin': '<!(node -p "require(\'addon-tools-raub\').getBin()")',
-		'gl_include': '<!(node -p "require(\'deps-opengl-raub\').include")',
-		'gl_bin': '<!(node -p "require(\'deps-opengl-raub\').bin")',
+		'bin': '<!(node -p "require(\'@node-3d/addon-tools\').getBin()")',
+		'gl_include': '<!(node -p "require(\'@node-3d/deps-opengl\').include")',
+		'gl_bin': '<!(node -p "require(\'@node-3d/deps-opengl\').bin")',
 	},
 ```
 
@@ -139,8 +139,8 @@ Copy the addon file, for example, from `./src/build/Release/glfw.node`
 to `./bin-windows/glfw.node`, but each platform uses a different folder.
 
 ```json
-"build": "cd src && node-gyp rebuild -j max --silent && node -e \"require('addon-tools-raub').cpbin('glfw')\"",
-"build-only": "cd src && node-gyp build -j max --silent && node -e \"require('addon-tools-raub').cpbin('glfw')\"",
+"build": "cd src && node-gyp rebuild -j max --silent && node -e \"require('@node-3d/addon-tools').cpbin('glfw')\"",
+"build-only": "cd src && node-gyp build -j max --silent && node -e \"require('@node-3d/addon-tools').cpbin('glfw')\"",
 ```
 
 ### Example of `cpcpplint` in **cpplint.yml**:
@@ -153,7 +153,7 @@ here's how it can be used:
 ```yml
 - name: Run Cpplint
   run: |
-    node -e "require('addon-tools-raub').cpcpplint()"
+    node -e "require('@node-3d/addon-tools').cpcpplint()"
     cpplint --recursive ./src/cpp
 ```
 
@@ -163,8 +163,8 @@ Downloads the addon (for example, from GitHub releases) and places
 it into a platform-specific folder.
 
 ```js
-const { install } = require('addon-tools-raub');
-const prefix = 'https://github.com/node-3d/glfw-raub/releases/download';
+const { install } = require('@node-3d/addon-tools');
+const prefix = 'https://github.com/node-3d/glfw/releases/download';
 const tag = '5.5.0';
 install(`${prefix}/${tag}`);
 ```
@@ -175,14 +175,27 @@ JavaScript helpers for Node.js addon development. The short list of helpers:
 
 ```js
 	'getBin', 'getPlatform', 'getInclude', 'getPaths',
-	'install', 'cpbin', 'download', 'read', 'write', 'copy', 'exists',
-	'mkdir', 'stat', 'isDir', 'isFile', 'dirUp', 'ensuredir', 'copysafe',
-	'readdir', 'subdirs', 'subfiles', 'traverse', 'copyall',
-	'rmdir', 'rm', 'WritableBuffer', 'actionPack',
+	'install', 'cpbin', 'download', 'copy', 'exists',
+	'ensuredir', 'subdirs', 'subfiles', 'traverse',
+	'rmdir', 'rm', 'actionPack', 'checkGypi',
 	'createLogger', 'setLevel', 'getLevel', 'getLoggers',
 ```
 
-See the [TypeScript declarations](/index.d.ts) with comments.
+The public JS helpers are:
+
+* `getPaths(dir)` - return `{ bin, include }` for a dependency package and prepend `bin`
+  to `PATH` on Windows.
+* `getBin()`, `printBin()` - current platform binary directory, such as `bin-windows`.
+* `getPlatform()`, `printPlatform()` - current platform key.
+* `getInclude()`, `printInclude()` - include flags for addon-tools and optional
+  `node-addon-api`.
+* `cpbin(name)` - copy `src/build/Release/<name>.node` into the platform `bin-*` directory.
+* `cpcpplint()` - copy the shared `CPPLINT.cfg` into the current directory.
+* `checkGypi(path?)` - verify a local `common.gypi` matches the shared one.
+* `install(folderUrl)` - download and unpack `<platform>.gz` into the current platform bin dir.
+* `download(url)` - fetch a URL into a `Buffer`.
+* `copy`, `exists`, `ensuredir`, `subdirs`, `subfiles`, `traverse`, `rmdir`, `rm`.
+* `actionPack()` - pack the current platform bin directory as `<platform>.gz`.
 
 ### Logger:
 
@@ -199,7 +212,7 @@ Now the following JS calls are equal:
 ```js
 	logger.warn(1, 2, '3');
 	global.AddonTools.log('my-logger', 'warn', 1, 2, '3');
-	require('addon-tools-raub').getLogger('my-logger').warn(1, 2, '3');
+	require('@node-3d/addon-tools').getLogger('my-logger').warn(1, 2, '3');
 ```
 
 And the C++ calls are:
@@ -211,4 +224,12 @@ And the C++ calls are:
 	globalLog(env, "cpp", "warn", 3, &args[0]);
 ```
 
-See the [TS declarations](/index.d.ts) with comments.
+Logger helpers:
+
+* `createLogger({ name, ...methods })` - create or update a named logger.
+* `getLogger(name)` - get an existing logger or create one with console methods.
+* `setLevel(level | null)` and `getLevel()` - control global log filtering.
+* `getLoggers()` - return the logger registry snapshot.
+
+`global.AddonTools.log(name, level, ...args)` is installed for C++ helpers that need to
+route log messages back into JavaScript.

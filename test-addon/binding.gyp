@@ -6,7 +6,7 @@
 			'test.cpp',
 		],
 		'include_dirs': [
-			'<!@(node -p "require(\'..\').getInclude()")',
+			'<!@(node -e "import(\'../dist/index.js\').then((m) => m.printInclude())")',
 		],
 	}],
 }

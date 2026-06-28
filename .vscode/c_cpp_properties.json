@@ -4,7 +4,9 @@
             "name": "Win32",
             "includePath": [
                 "${workspaceFolder}/**",
-                "${LocalAppData}/node-gyp/Cache/24.13.0/include/node"
+                "${env:LOCALAPPDATA}/node-gyp/Cache/24.13.0/include/node",
+                "${workspaceFolder}/node_modules/node-addon-api",
+                "${workspaceFolder}/../../node_modules/node-addon-api"
             ],
             "windowsSdkVersion": "10.0.19041.0",
             "cStandard": "c17",

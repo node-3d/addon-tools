@@ -4,6 +4,7 @@
 #define NAPI_DISABLE_CPP_EXCEPTIONS
 #include <napi.h>
 #include <cstring>
+#include <type_traits>
 
 
 #ifdef _WIN32
@@ -459,13 +460,16 @@ inline Napi::Array vecStrToArray(Napi::Env env, const std::vector<std::string> &
 	Napi::Value VAR(env, __RESULT_ ## VAR);
 
 
-template<typename Type = uint8_t>
-inline const Type* getArrayData(
+template<typename Type = const uint8_t>
+inline Type* getArrayData(
 	Napi::Env env,
 	Napi::Object obj,
 	int32_t *num = nullptr
 ) {
-	const Type *out = nullptr;
+	using ValueType = std::remove_cv_t<Type>;
+	using ByteType = std::conditional_t<std::is_const_v<Type>, const uint8_t, uint8_t>;
+	
+	Type *out = nullptr;
 	if (num) {
 		*num = 0;
 	}
@@ -475,50 +479,50 @@ inline const Type* getArrayData(
 		size_t offset = ta.ByteOffset();
 		size_t byteLength = ta.ByteLength();
 		Napi::ArrayBuffer arr = ta.ArrayBuffer();
-		if (byteLength > 0 && byteLength < sizeof(Type)) {
+		if (byteLength > 0 && byteLength < sizeof(ValueType)) {
 			JS_THROW("Array data does not contain a complete item of the requested type.");
 			return nullptr;
 		}
-		if ((byteLength % sizeof(Type)) != 0) {
+		if ((byteLength % sizeof(ValueType)) != 0) {
 			JS_THROW("Array byte length must be a multiple of the requested type size.");
 			return nullptr;
 		}
-		const uint8_t *base = reinterpret_cast<const uint8_t *>(arr.Data());
-		const uint8_t *raw = base == nullptr ? nullptr : base + offset;
+		ByteType *base = reinterpret_cast<ByteType *>(arr.Data());
+		ByteType *raw = base == nullptr ? nullptr : base + offset;
 		if (
 			raw != nullptr &&
-			(reinterpret_cast<uintptr_t>(raw) % alignof(Type)) != 0
+			(reinterpret_cast<uintptr_t>(raw) % alignof(ValueType)) != 0
 		) {
 			JS_THROW("Array data is not properly aligned for the requested type.");
 			return nullptr;
 		}
 		if (num) {
-			*num = static_cast<int32_t>(byteLength / sizeof(Type));
+			*num = static_cast<int32_t>(byteLength / sizeof(ValueType));
 		}
-		out = reinterpret_cast<const Type *>(raw);
+		out = reinterpret_cast<Type *>(raw);
 	} else if (obj.IsArrayBuffer()) {
 		Napi::ArrayBuffer arr = obj.As<Napi::ArrayBuffer>();
 		size_t byteLength = arr.ByteLength();
-		if (byteLength > 0 && byteLength < sizeof(Type)) {
+		if (byteLength > 0 && byteLength < sizeof(ValueType)) {
 			JS_THROW("Array data does not contain a complete item of the requested type.");
 			return nullptr;
 		}
-		if ((byteLength % sizeof(Type)) != 0) {
+		if ((byteLength % sizeof(ValueType)) != 0) {
 			JS_THROW("Array byte length must be a multiple of the requested type size.");
 			return nullptr;
 		}
-		const void *raw = arr.Data();
+		ByteType *raw = reinterpret_cast<ByteType *>(arr.Data());
 		if (
 			raw != nullptr &&
-			(reinterpret_cast<uintptr_t>(raw) % alignof(Type)) != 0
+			(reinterpret_cast<uintptr_t>(raw) % alignof(ValueType)) != 0
 		) {
 			JS_THROW("Array data is not properly aligned for the requested type.");
 			return nullptr;
 		}
 		if (num) {
-			*num = static_cast<int32_t>(byteLength / sizeof(Type));
+			*num = static_cast<int32_t>(byteLength / sizeof(ValueType));
 		}
-		out = reinterpret_cast<const Type *>(raw);
+		out = reinterpret_cast<Type *>(raw);
 	} else {
 		JS_THROW("Argument must be of type `TypedArray`.");
 	}
@@ -527,12 +531,15 @@ inline const Type* getArrayData(
 }
 
 
-template<typename Type = uint8_t>
-inline const Type* getBufferData(
+template<typename Type = const uint8_t>
+inline Type* getBufferData(
 	Napi::Env env,
 	Napi::Object obj,
 	int32_t *num = nullptr
 ) {
+	using ValueType = std::remove_cv_t<Type>;
+	using ByteType = std::conditional_t<std::is_const_v<Type>, const uint8_t, uint8_t>;
+	
 	if (num) {
 		*num = 0;
 	}
@@ -544,36 +551,44 @@ inline const Type* getBufferData(
 	
 	Napi::Buffer<uint8_t> arr = obj.As< Napi::Buffer<uint8_t> >();
 	size_t byteLength = arr.Length();
-	if (byteLength > 0 && byteLength < sizeof(Type)) {
+	if (byteLength > 0 && byteLength < sizeof(ValueType)) {
 		JS_THROW("Buffer does not contain a complete item of the requested type.");
 		return nullptr;
 	}
-	if ((byteLength % sizeof(Type)) != 0) {
+	if ((byteLength % sizeof(ValueType)) != 0) {
 		JS_THROW("Buffer byte length must be a multiple of the requested type size.");
 		return nullptr;
 	}
-	const uint8_t *raw = arr.Data();
+	ByteType *raw = reinterpret_cast<ByteType *>(arr.Data());
 	if (
 		raw != nullptr &&
-		(reinterpret_cast<uintptr_t>(raw) % alignof(Type)) != 0
+		(reinterpret_cast<uintptr_t>(raw) % alignof(ValueType)) != 0
 	) {
 		JS_THROW("Buffer data is not properly aligned for the requested type.");
 		return nullptr;
 	}
 	if (num) {
-		*num = static_cast<int32_t>(byteLength / sizeof(Type));
+		*num = static_cast<int32_t>(byteLength / sizeof(ValueType));
 	}
-	return reinterpret_cast<const Type*>(raw);
+	return reinterpret_cast<Type*>(raw);
 }
 
 
-inline const void *getData(Napi::Env env, Napi::Object obj) {
-	const void *out = nullptr;
+template<typename Type = const uint8_t>
+inline Type *getData(
+	Napi::Env env,
+	Napi::Object obj,
+	int32_t *num = nullptr
+) {
+	Type *out = nullptr;
+	if (num) {
+		*num = 0;
+	}
 	
 	if (obj.IsTypedArray() || obj.IsArrayBuffer()) {
-		out = getArrayData<uint8_t>(env, obj);
+		out = getArrayData<Type>(env, obj, num);
 	} else if (obj.IsBuffer()) {
-		out = getBufferData<uint8_t>(env, obj);
+		out = getBufferData<Type>(env, obj, num);
 	} else {
 		bool hasData = false;
 		napi_status hasStatus = napi_has_named_property(
@@ -608,9 +623,9 @@ inline const void *getData(Napi::Env env, Napi::Object obj) {
 		) {
 			Napi::Object data = dataValue.As<Napi::Object>();
 			if (data.IsTypedArray() || data.IsArrayBuffer()) {
-				out = getArrayData<uint8_t>(env, data);
+				out = getArrayData<Type>(env, data, num);
 			} else if (data.IsBuffer()) {
-				out = getBufferData<uint8_t>(env, data);
+				out = getBufferData<Type>(env, data, num);
 			}
 		}
 	}
