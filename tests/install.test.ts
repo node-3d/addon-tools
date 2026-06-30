@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { exists, getBin, install } from '../ts/index.ts';
 
-const prefix = 'https://github.com/node-3d/segfault-raub/releases/download';
+const prefix = 'https://github.com/node-3d/segfault/releases/download';
 const tag = '2.3.0';
 
 describe('AT / Install', async () => {

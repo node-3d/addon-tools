@@ -3,7 +3,7 @@ import { describe, it } from 'node:test';
 
 import { download } from '../ts/index.ts';
 
-const url = 'https://raw.githubusercontent.com/node-3d/image-raub/refs/tags/4.3.0/test/freeimage.jpg';
+const url = 'https://raw.githubusercontent.com/node-3d/image/refs/tags/4.3.0/test/freeimage.jpg';
 
 describe('AT / Download', async () => {
 	const data = await download(url);
