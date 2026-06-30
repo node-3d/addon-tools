@@ -37,7 +37,7 @@ jobs:
         run: npm ci
 
       - name: Build Sample Addon
-        run: npm run build-test
+        run: npm run build:test-addon
 
       - name: Run Unit Tests
-        run: npm run test-ci
+        run: npm run test:ci
