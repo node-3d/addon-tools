@@ -5,7 +5,16 @@ const config: Oxfmtrc = {
 	useTabs: true,
 	tabWidth: 4,
 	singleQuote: true,
-	jsxSingleQuote: true,
+	jsxSingleQuote: false,
+	arrowParens: 'always',
+	bracketSpacing: true,
+	endOfLine: 'lf',
+	insertFinalNewline: true,
+	objectWrap: 'preserve',
+	semi: true,
+	printWidth: 100,
+	trailingComma: 'all',
+
 	ignorePatterns: [
 		'**/node_modules/**',
 		'**/dist/**',
