@@ -4,10 +4,9 @@ import { after, before, describe, it } from 'node:test';
 import { test } from './test-addon.ts';
 import { createLogger } from '../ts/index.ts';
 
-
 describe('AT / HPP / Console Log', () => {
 	let logged = '';
-	
+
 	const logOld = console.log;
 	before(() => {
 		console.log = (...args) => {
@@ -17,12 +16,12 @@ describe('AT / HPP / Console Log', () => {
 	after(() => {
 		console.log = logOld;
 	});
-	
+
 	it('logged string to console from cpp', () => {
 		test.consoleLogString();
 		assert.strictEqual(logged, 'test.');
 	});
-	
+
 	it('logged args to console from cpp', () => {
 		logged = '';
 		test.consoleLogArgs();
@@ -32,9 +31,11 @@ describe('AT / HPP / Console Log', () => {
 
 describe('AT / HPP / Global Log', () => {
 	let logged = '';
-	const fn = (level: string) => (...args: unknown[]) => {
-		logged += `${level}:${args.join(',')}.`;
-	};
+	const fn =
+		(level: string) =>
+		(...args: unknown[]) => {
+			logged += `${level}:${args.join(',')}.`;
+		};
 	createLogger({
 		name: 'cpp',
 		debug: fn('debug'),
@@ -43,12 +44,12 @@ describe('AT / HPP / Global Log', () => {
 		warn: fn('warn'),
 		error: fn('error'),
 	});
-	
+
 	it('logged string to global logger from cpp', () => {
 		test.globalLogString();
 		assert.strictEqual(logged, 'info:test.');
 	});
-	
+
 	it('logged args to global logger from cpp', () => {
 		logged = '';
 		test.globalLogArgs();

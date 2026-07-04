@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 describe('addon-tools.hpp: getBufferData', () => {
 	it('reads float data from a Buffer', () => {
 		const buffer = Buffer.allocUnsafe(8);
@@ -26,17 +25,15 @@ describe('addon-tools.hpp: getBufferData', () => {
 	});
 
 	it('throws if the buffer is smaller than one float', () => {
-		assert.throws(
-			() => test.getBufferDataFloatMeta(Buffer.from([1, 2, 3])),
-			{ message: 'Buffer does not contain a complete item of the requested type.' },
-		);
+		assert.throws(() => test.getBufferDataFloatMeta(Buffer.from([1, 2, 3])), {
+			message: 'Buffer does not contain a complete item of the requested type.',
+		});
 	});
 
 	it('throws if the buffer length is not a whole number of floats', () => {
-		assert.throws(
-			() => test.getBufferDataFloatMeta(Buffer.allocUnsafe(6)),
-			{ message: 'Buffer byte length must be a multiple of the requested type size.' },
-		);
+		assert.throws(() => test.getBufferDataFloatMeta(Buffer.allocUnsafe(6)), {
+			message: 'Buffer byte length must be a multiple of the requested type size.',
+		});
 	});
 
 	it('throws on a misaligned Buffer view', () => {
@@ -48,9 +45,8 @@ describe('addon-tools.hpp: getBufferData', () => {
 			count: 2,
 			first: 1.5,
 		});
-		assert.throws(
-			() => test.getBufferDataFloatMeta(misalignedView),
-			{ message: 'Buffer data is not properly aligned for the requested type.' },
-		);
+		assert.throws(() => test.getBufferDataFloatMeta(misalignedView), {
+			message: 'Buffer data is not properly aligned for the requested type.',
+		});
 	});
 });

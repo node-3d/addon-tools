@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const boolArgMsg = { message: 'Argument 0 must be of type `Bool`' };
 const boolArgLetMsg = { message: 'Argument 0 must be of type `Bool` or be `null`/`undefined`' };
 

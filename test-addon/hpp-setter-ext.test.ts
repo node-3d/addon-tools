@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 describe('addon-tools.hpp: SETTER_EXT_ARG', () => {
 	it('round-trips a non-null external pointer', () => {
 		const value = test.setterExtRoundTrip(test.retExtNonNull());
@@ -18,8 +17,11 @@ describe('addon-tools.hpp: SETTER_EXT_ARG', () => {
 	});
 
 	it('rejects non-external values', () => {
-		assert.throws(() => {
-			test.setterExtRoundTrip(1);
-		}, { message: 'Value must be Pointer' });
+		assert.throws(
+			() => {
+				test.setterExtRoundTrip(1);
+			},
+			{ message: 'Value must be Pointer' },
+		);
 	});
 });

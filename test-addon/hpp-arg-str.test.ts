@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const strArgMsg = { message: 'Argument 0 must be of type `String`' };
 const strArgLetMsg = { message: 'Argument 0 must be of type `String` or be `null`/`undefined`' };
 

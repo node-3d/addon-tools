@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const extArgMsg = { message: 'Argument 0 must be of type `Pointer`' };
 const extArgLetMsg = { message: 'Argument 0 must be of type `Pointer` or be `null`/`undefined`' };
 

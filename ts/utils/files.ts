@@ -45,11 +45,7 @@ export const traverse = async (name: string, showDirs = false): Promise<string[]
 	const nestedItems = await Promise.all(dirs.map((dir) => traverse(dir, showDirs)));
 	const nested = nestedItems.flat();
 	const files = await subfiles(name);
-	return [
-		...(showDirs ? dirs : []),
-		...nested,
-		...files,
-	];
+	return [...(showDirs ? dirs : []), ...nested, ...files];
 };
 
 export const rmdir = async (name: string): Promise<void> => {

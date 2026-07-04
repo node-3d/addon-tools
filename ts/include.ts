@@ -14,18 +14,18 @@ const platformNames: Readonly<Record<string, string>> = {
 const platformName = platformNames[platformAndArch] || platformAndArch;
 const isWindows = platformName === nameWindows;
 
-type TAddonPaths = { bin: string, include: string };
+type TAddonPaths = { bin: string; include: string };
 
 export const getPaths = (dir: string): TAddonPaths => {
 	const dirFws = dir.replaceAll('\\', '/');
 	const bin = `${dirFws}/bin-${platformName}`;
 	const include = `${dirFws}/include`;
-	
+
 	if (isWindows) {
 		// oxlint-disable-next-line node/no-process-env
 		process.env.path = `${bin};${process.env.path ? `${process.env.path}` : ''}`;
 	}
-	
+
 	return { bin, include };
 };
 

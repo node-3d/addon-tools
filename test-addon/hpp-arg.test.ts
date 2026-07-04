@@ -3,11 +3,9 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 describe('AT / HPP / Function arguments', () => {
-	
 	const arg3Msg = { message: 'Expected at least 3 arguments' };
-	
+
 	describe('REQ_ARGS', () => {
 		it('exports reqArgs3', () => {
 			assert.strictEqual(typeof test.reqArgs3, 'function');
@@ -25,7 +23,7 @@ describe('AT / HPP / Function arguments', () => {
 			assert.ok(test.reqArgs3(1, 2, 3, 4, 5));
 		});
 	});
-	
+
 	describe('IS_ARG_EMPTY', () => {
 		it('exports isArg0Empty', () => {
 			assert.strictEqual(typeof test.isArg0Empty, 'function');
@@ -43,11 +41,11 @@ describe('AT / HPP / Function arguments', () => {
 			assert.strictEqual(test.isArg0Empty(1), false);
 		});
 	});
-	
+
 	// ------------------------------ FUN_ARG
-	
+
 	const funArgMsg = { message: 'Argument 0 must be of type `Function`' };
-	
+
 	describe('REQ_FUN_ARG', () => {
 		it('exports reqFunArg', () => {
 			assert.strictEqual(typeof test.reqFunArg, 'function');
@@ -80,14 +78,19 @@ describe('AT / HPP / Function arguments', () => {
 			assert.throws(() => test.reqFunArg([]), funArgMsg);
 		});
 		it('accepts a function', () => {
-			assert.strictEqual(typeof test.reqFunArg(() => { /* nop */ }), 'function');
+			assert.strictEqual(
+				typeof test.reqFunArg(() => {
+					/* nop */
+				}),
+				'function',
+			);
 		});
 	});
-	
+
 	// ------------------------------ ARRV_ARG
-	
+
 	const arrvArgMsg = { message: 'Argument 0 must be of type `ArrayBuffer`' };
-	
+
 	describe('REQ_ARRV_ARG', () => {
 		it('exports reqArrvArg', () => {
 			assert.strictEqual(typeof test.reqArrvArg, 'function');
@@ -124,11 +127,11 @@ describe('AT / HPP / Function arguments', () => {
 			assert.strictEqual(test.reqArrvArg(buffer), buffer);
 		});
 	});
-	
+
 	// ------------------------------ BUF_ARG
-	
+
 	const bufArgMsg = { message: 'Argument 0 must be of type `Buffer`' };
-	
+
 	describe('REQ_BUF_ARG', () => {
 		it('exports reqBufArg', () => {
 			assert.strictEqual(typeof test.reqBufArg, 'function');
@@ -165,11 +168,11 @@ describe('AT / HPP / Function arguments', () => {
 			assert.strictEqual(test.reqBufArg(buffer), buffer);
 		});
 	});
-	
+
 	// ------------------------------ TYPED_ARRAY_ARG
-	
+
 	const typedArgMsg = { message: 'Argument 0 must be of type `TypedArray`' };
-	
+
 	describe('REQ_TYPED_ARRAY_ARG', () => {
 		it('exports reqTypedArg', () => {
 			assert.strictEqual(typeof test.reqTypedArg, 'function');

@@ -9,11 +9,9 @@ const exec = promisify(execCallback);
 const logger = getLogger('addon-tools');
 
 const download = async (url: string) => {
-	const { stderr } = await exec([
-		'curl -sL -o',
-		`${getBin()}/${getPlatform()}.gz`,
-		url,
-	].join(' '));
+	const { stderr } = await exec(
+		['curl -sL -o', `${getBin()}/${getPlatform()}.gz`, url].join(' '),
+	);
 	if (stderr) {
 		logger.warn(stderr);
 	}
@@ -30,18 +28,18 @@ export const install = async (folderUrl: string): Promise<boolean> => {
 	const binPath = getBin();
 	const urlPath = `${folderUrl}/${getPlatform()}.gz`;
 	const gzPath = `${binPath}/${getPlatform()}.gz`;
-	
+
 	await rmdir(binPath);
 	await fs.mkdir(binPath, { recursive: true });
-	
+
 	try {
 		await download(urlPath);
-		
+
 		if (!(await exists(gzPath))) {
 			logger.warn(`Could not download "${urlPath}" to "${gzPath}"`);
 			return false;
 		}
-		
+
 		await unpack(gzPath, binPath);
 	} catch (error) {
 		logger.warn(error);

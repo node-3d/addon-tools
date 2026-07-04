@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const arrayArgLetMsg = { message: 'Argument 0 must be of type `Array` or be `null`/`undefined`' };
 
 describe('AT / HPP / LET_ARRAY_ARG', () => {
@@ -38,6 +37,6 @@ describe('AT / HPP / LET_ARRAY_ARG', () => {
 		assert.ok(Array.isArray(test.letArrayStrArg([])));
 	});
 	it('returns same array', () => {
-		assert.deepStrictEqual(test.letArrayStrArg(['a', 'b']),['a', 'b']);
+		assert.deepStrictEqual(test.letArrayStrArg(['a', 'b']), ['a', 'b']);
 	});
 });

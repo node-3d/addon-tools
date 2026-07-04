@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const uint64ArgMsg = { message: 'Argument 0 must be of type `Uint64`' };
 const uint64ArgLetMsg = { message: 'Argument 0 must be of type `Uint64` or be `null`/`undefined`' };
 

@@ -5,9 +5,11 @@ import * as utils from '../ts/index.ts';
 
 describe('AT / Logger', () => {
 	let logged = '';
-	const fn = (level: string) => (...args: unknown[]) => {
-		logged += `${level}:${args.join(',')}.`;
-	};
+	const fn =
+		(level: string) =>
+		(...args: unknown[]) => {
+			logged += `${level}:${args.join(',')}.`;
+		};
 	const logger = utils.createLogger({
 		name: 'test',
 		debug: fn('debug'),
@@ -16,7 +18,7 @@ describe('AT / Logger', () => {
 		warn: fn('warn'),
 		error: fn('error'),
 	});
-	
+
 	it('creates a custom logger', () => {
 		assert.strictEqual(typeof logger, 'object');
 		assert.ok(logger.debug);
@@ -25,7 +27,7 @@ describe('AT / Logger', () => {
 		assert.ok(logger.warn);
 		assert.ok(logger.error);
 	});
-	
+
 	it('creates a default logger', () => {
 		const logger2 = utils.createLogger({ name: 'test2' });
 		assert.strictEqual(typeof logger2, 'object');
@@ -35,7 +37,7 @@ describe('AT / Logger', () => {
 		assert.ok(logger2.warn);
 		assert.ok(logger2.error);
 	});
-	
+
 	it('creates a fallback logger', () => {
 		const logger3 = utils.getLogger(`logger-${Math.random()}`);
 		assert.strictEqual(typeof logger3, 'object');
@@ -45,11 +47,11 @@ describe('AT / Logger', () => {
 		assert.ok(logger3.warn);
 		assert.ok(logger3.error);
 	});
-	
+
 	it('fetches a named logger', () => {
 		assert.strictEqual(utils.getLogger('test'), logger);
 	});
-	
+
 	it('logged the messages at default "log" level', () => {
 		logger.debug('1', '2');
 		logger.log(3, 4);
@@ -58,7 +60,7 @@ describe('AT / Logger', () => {
 		logger.error('7');
 		assert.strictEqual(logged, 'log:3,4.info:5.warn:6.error:7.');
 	});
-	
+
 	it('logged the messages at "debug" level', () => {
 		logged = '';
 		utils.setLevel('debug');
@@ -69,7 +71,7 @@ describe('AT / Logger', () => {
 		logger.error('7');
 		assert.strictEqual(logged, 'debug:1,2.log:3,4.info:5.warn:6.error:7.');
 	});
-	
+
 	it('logged the messages at "null" level', () => {
 		logged = '';
 		utils.setLevel(null);
@@ -77,7 +79,7 @@ describe('AT / Logger', () => {
 		logger.error('7');
 		assert.strictEqual(logged, '');
 	});
-	
+
 	it('logged through global helper', () => {
 		logged = '';
 		utils.setLevel('error');
@@ -85,7 +87,7 @@ describe('AT / Logger', () => {
 		globalThis.AddonTools?.log?.('test', 'error', '7');
 		assert.strictEqual(logged, 'error:7.');
 	});
-	
+
 	it('has default "addon-tools" logger', () => {
 		assert.ok(utils.getLoggers()['addon-tools']);
 	});

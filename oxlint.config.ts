@@ -1,3 +1,1 @@
-import sharedConfig from './ts/utils/oxlint.ts';
-
-export default sharedConfig;
+export { default } from './ts/utils/oxlint.ts';

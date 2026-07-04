@@ -14,6 +14,10 @@
 		"./oxlint": {
 			"types": "./ts/utils/oxlint.ts",
 			"default": "./ts/utils/oxlint.ts"
+		},
+		"./oxfmt": {
+			"types": "./ts/utils/oxfmt.ts",
+			"default": "./ts/utils/oxfmt.ts"
 		}
 	},
 	"keywords": [
@@ -31,6 +35,7 @@
 	"files": [
 		"dist",
 		"ts/utils/oxlint.ts",
+		"ts/utils/oxfmt.ts",
 		"include",
 		"utils",
 		"LICENSE",
@@ -47,6 +52,8 @@
 		"build:test-addon": "cd test-addon && node-gyp rebuild -j max --silent",
 		"lint:ts": "tsgo -p tsconfig.test.json --noEmit",
 		"lint:oxlint": "oxlint .",
+		"format:ts": "oxfmt -c ./oxfmt.config.ts --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
+		"format:ci": "oxfmt -c ./oxfmt.config.ts --check --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
 		"lint:all": "npm run lint:ts && npm run lint:oxlint",
 		"prepare": "npm run build:ci",
 		"test:watch": "node --test --watch \"tests/**/*.test.ts\"",

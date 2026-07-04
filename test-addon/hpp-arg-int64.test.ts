@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const int64ArgMsg = { message: 'Argument 0 must be of type `Int64`' };
 const int64ArgLetMsg = { message: 'Argument 0 must be of type `Int64` or be `null`/`undefined`' };
 

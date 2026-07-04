@@ -5,7 +5,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 describe('addon-tools.hpp: ES5 wrappers', () => {
 	it('exports CrashProbe', () => {
 		assert.strictEqual(typeof test.CrashProbe, 'function');
@@ -32,7 +31,6 @@ describe('addon-tools.hpp: ES5 wrappers', () => {
 	});
 });
 
-
 describe('addon-tools.hpp: strcasestr_crossplatform helper', () => {
 	const run = process.platform === 'win32' ? it : it.skip;
 
@@ -47,7 +45,6 @@ describe('addon-tools.hpp: strcasestr_crossplatform helper', () => {
 	});
 });
 
-
 describe('addon-tools.hpp: typed data helpers', () => {
 	it('should reject reinterpreting a Uint8Array as uint32_t data', () => {
 		const base = new Uint32Array(4);
@@ -58,27 +55,28 @@ describe('addon-tools.hpp: typed data helpers', () => {
 			count: 1,
 			alignment: 0,
 		});
-		assert.throws(
-			() => test.getArrayDataUint32Meta(misalignedView),
-			{ message: 'Array data is not properly aligned for the requested type.' },
-		);
+		assert.throws(() => test.getArrayDataUint32Meta(misalignedView), {
+			message: 'Array data is not properly aligned for the requested type.',
+		});
 	});
 });
 
-
 describe('addon-tools.hpp: getData fallback behavior', () => {
 	it('should return false when `.data` throws during lookup', () => {
-		const tricky = new Proxy({}, {
-			has(_target, key) {
-				return key === 'data';
+		const tricky = new Proxy(
+			{},
+			{
+				has(_target, key) {
+					return key === 'data';
+				},
+				get(_target, key) {
+					if (key === 'data') {
+						throw new Error('getter exploded');
+					}
+					return undefined;
+				},
 			},
-			get(_target, key) {
-				if (key === 'data') {
-					throw new Error('getter exploded');
-				}
-				return undefined;
-			},
-		});
+		);
 
 		assert.strictEqual(test.getDataPresence(tricky), false);
 	});

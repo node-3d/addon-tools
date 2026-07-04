@@ -1,6 +1,7 @@
 {
 	"extends": "./tsconfig.json",
 	"exclude": [
-		"ts/utils/oxlint.ts"
+		"ts/utils/oxlint.ts",
+		"ts/utils/oxfmt.ts"
 	]
 }

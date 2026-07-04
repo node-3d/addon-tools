@@ -28,19 +28,24 @@ for (let i = 0; i < levels.length; i++) {
 	levelIdx[levels[i] ?? 'null'] = i;
 }
 
-const wrapOutput = (outputFn: LoggerFn, level: LoggerLevel) => (...args: unknown[]) => {
-	const outputLevel = levelIdx[level] ?? 0;
-	const activeLevel = levelIdx[currentLevel ?? 'null'] ?? 0;
-	
-	if (outputLevel > activeLevel) {
-		return;
-	}
-	outputFn(...args);
-};
+const wrapOutput =
+	(outputFn: LoggerFn, level: LoggerLevel) =>
+	(...args: unknown[]) => {
+		const outputLevel = levelIdx[level] ?? 0;
+		const activeLevel = levelIdx[currentLevel ?? 'null'] ?? 0;
 
-const isLoggerLevel = (value: string): value is LoggerLevel => (
-	value === 'error' || value === 'warn' || value === 'info' || value === 'log' || value === 'debug'
-);
+		if (outputLevel > activeLevel) {
+			return;
+		}
+		outputFn(...args);
+	};
+
+const isLoggerLevel = (value: string): value is LoggerLevel =>
+	value === 'error' ||
+	value === 'warn' ||
+	value === 'info' ||
+	value === 'log' ||
+	value === 'debug';
 
 const assignMethods = (logger: Logger, methods: Partial<Record<LoggerLevel, LoggerFn>>) => {
 	for (const [k, v] of Object.entries(methods)) {
@@ -64,14 +69,17 @@ export const createLogger = (opts: LoggerOptions): Logger => {
 		error: console.error,
 		replace: (level: string, fn: LoggerFn) => {
 			if (levelIdx[level]) {
-				newLogger[level as LoggerLevel] = wrapOutput(fn || console.log, level as LoggerLevel);
+				newLogger[level as LoggerLevel] = wrapOutput(
+					fn || console.log,
+					level as LoggerLevel,
+				);
 			}
 		},
 	};
 	assignMethods(newLogger, opts);
-	
+
 	loggers[opts.name] = newLogger;
-	
+
 	return newLogger;
 };
 

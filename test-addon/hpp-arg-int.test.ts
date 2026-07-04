@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const intArgMsg = { message: 'Argument 0 must be of type `Int32`' };
 const intArgLetMsg = { message: 'Argument 0 must be of type `Int32` or be `null`/`undefined`' };
 

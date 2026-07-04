@@ -3,7 +3,6 @@ import { describe, it } from 'node:test';
 
 import { test } from './test-addon.ts';
 
-
 const objArgMsg = { message: 'Argument 0 must be of type `Object`' };
 const objArgLetMsg = { message: 'Argument 0 must be of type `Object` or be `null`/`undefined`' };
 
