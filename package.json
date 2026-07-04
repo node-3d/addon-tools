@@ -1,7 +1,7 @@
 {
 	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "@node-3d/addon-tools",
-	"version": "11.0.0",
+	"version": "10.0.0",
 	"description": "Helpers for Node.js addons and dependency packages",
 	"license": "MIT",
 	"main": "dist/index.js",
@@ -58,7 +58,7 @@
 		"url": "https://github.com/node-3d/addon-tools.git"
 	},
 	"peerDependencies": {
-		"node-addon-api": "^8.7.0"
+		"node-addon-api": "8.9.0"
 	},
 	"peerDependenciesMeta": {
 		"node-addon-api": {
@@ -66,12 +66,13 @@
 		}
 	},
 	"devDependencies": {
-		"@rslib/core": "^0.21.3",
-		"@types/node": "^24.1.0",
-		"@typescript/native-preview": "^7.0.0-dev.20260503.1",
-		"node-addon-api": "^8.7.0",
-		"oxlint": "^1.65.0",
-		"typescript": "^6.0.3"
+		"@rslib/core": "0.23.2",
+		"@types/node": "24.13.2",
+		"@typescript/native-preview": "7.0.0-dev.20260704.1",
+		"node-addon-api": "8.9.0",
+		"oxlint": "1.72.0",
+		"oxfmt": "0.57.0",
+		"typescript": "6.0.3"
 	},
 	"type": "module",
 	"bugs": {
