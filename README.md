@@ -102,7 +102,10 @@ NODE_API_MODULE(myaddon, init)
 Get the platform-specific directory name to import the `ADDON.node` file.
 
 ```js
-	const { getBin } = require('@node-3d/addon-tools');
+	import { createRequire } from 'node:module';
+	import { getBin } from '@node-3d/addon-tools';
+
+	const require = createRequire(import.meta.url);
 	const core = require(`./${getBin()}/ADDON`);
 ```
 
@@ -114,7 +117,7 @@ and Addon API header:
 
 ```gyp
 	'include_dirs': [
-		'<!@(node -p "require(\'@node-3d/addon-tools\').getInclude()")',
+		'<!@(node -e "import(\'@node-3d/addon-tools\').then((m) => m.printInclude())")',
 	],
 ```
 
@@ -126,7 +129,7 @@ Using helpers for paths to dependency libs and own binaries:
 
 ```gyp
 	'variables': {
-		'bin': '<!(node -p "require(\'@node-3d/addon-tools\').getBin()")',
+		'bin': '<!(node -e "import(\'@node-3d/addon-tools\').then((m) => m.printBin())")',
 		'gl_include': '<!(node -p "require(\'@node-3d/deps-opengl\').include")',
 		'gl_bin': '<!(node -p "require(\'@node-3d/deps-opengl\').bin")',
 	},
@@ -139,8 +142,8 @@ Copy the addon file, for example, from `./src/build/Release/glfw.node`
 to `./bin-windows/glfw.node`, but each platform uses a different folder.
 
 ```json
-"build": "cd src && node-gyp rebuild -j max --silent && node -e \"require('@node-3d/addon-tools').cpbin('glfw')\"",
-"build-only": "cd src && node-gyp build -j max --silent && node -e \"require('@node-3d/addon-tools').cpbin('glfw')\"",
+"build": "cd src && node-gyp rebuild -j max --silent && node -e \"import('@node-3d/addon-tools').then((m) => m.cpbin('glfw'))\"",
+"build-only": "cd src && node-gyp build -j max --silent && node -e \"import('@node-3d/addon-tools').then((m) => m.cpbin('glfw'))\"",
 ```
 
 ### Example of `cpcpplint` in **cpplint.yml**:
@@ -153,7 +156,7 @@ here's how it can be used:
 ```yml
 - name: Run Cpplint
   run: |
-    node -e "require('@node-3d/addon-tools').cpcpplint()"
+    node -e "import('@node-3d/addon-tools').then((m) => m.cpcpplint())"
     cpplint --recursive ./src/cpp
 ```
 
@@ -163,7 +166,8 @@ Downloads the addon (for example, from GitHub releases) and places
 it into a platform-specific folder.
 
 ```js
-const { install } = require('@node-3d/addon-tools');
+import { install } from '@node-3d/addon-tools';
+
 const prefix = 'https://github.com/node-3d/glfw/releases/download';
 const tag = '5.5.0';
 install(`${prefix}/${tag}`);
@@ -212,7 +216,8 @@ Now the following JS calls are equal:
 ```js
 	logger.warn(1, 2, '3');
 	global.AddonTools.log('my-logger', 'warn', 1, 2, '3');
-	require('@node-3d/addon-tools').getLogger('my-logger').warn(1, 2, '3');
+	const { getLogger } = await import('@node-3d/addon-tools');
+	getLogger('my-logger').warn(1, 2, '3');
 ```
 
 And the C++ calls are:

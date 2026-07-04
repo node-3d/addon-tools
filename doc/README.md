@@ -17,7 +17,7 @@ For **GYP**, the include directory is accessible with:
 
 ```gyp
 'include_dirs': [
-	'<!@(node -p "require(\'@node-3d/addon-tools\').getInclude()")',
+	'<!@(node -e "import(\'@node-3d/addon-tools\').then((m) => m.printInclude())")',
 ],
 ```
 

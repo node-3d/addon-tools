@@ -37,6 +37,6 @@ jobs:
 
       - name: Run Cpplint
         run: |
-          node -e "import('.').then((m) => m.cpcpplint())"
+          node -e "import('@node-3d/addon-tools').then((m) => m.cpcpplint())"
           cpplint --recursive ./test-addon
           cpplint --recursive ./include
