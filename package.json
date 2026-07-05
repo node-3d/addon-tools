@@ -1,9 +1,40 @@
 {
-	"author": "Luis Blanco <luisblanco1337@gmail.com>",
 	"name": "@node-3d/addon-tools",
 	"version": "10.0.0",
 	"description": "Helpers for Node.js addons and dependency packages",
+	"keywords": [
+		"addon",
+		"bindings",
+		"c++",
+		"events",
+		"gyp",
+		"headers",
+		"include",
+		"napi",
+		"native",
+		"utils"
+	],
+	"homepage": "https://github.com/node-3d/node-3d#readme",
+	"bugs": {
+		"url": "https://github.com/node-3d/node-3d/issues"
+	},
 	"license": "MIT",
+	"author": "Luis Blanco <luisblanco1337@gmail.com>",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/node-3d/addon-tools.git"
+	},
+	"files": [
+		"dist",
+		"ts/utils/oxlint.ts",
+		"ts/utils/oxfmt.ts",
+		"include",
+		"utils",
+		"LICENSE",
+		"tsconfig.json",
+		"package.json"
+	],
+	"type": "module",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"exports": {
@@ -20,31 +51,8 @@
 			"default": "./ts/utils/oxfmt.ts"
 		}
 	},
-	"keywords": [
-		"headers",
-		"include",
-		"events",
-		"utils",
-		"c++",
-		"addon",
-		"bindings",
-		"native",
-		"napi",
-		"gyp"
-	],
-	"files": [
-		"dist",
-		"ts/utils/oxlint.ts",
-		"ts/utils/oxfmt.ts",
-		"include",
-		"utils",
-		"LICENSE",
-		"tsconfig.json",
-		"package.json"
-	],
-	"engines": {
-		"node": ">=24.13.0",
-		"npm": ">=11.6.2"
+	"publishConfig": {
+		"access": "public"
 	},
 	"scripts": {
 		"build:ci": "rslib build",
@@ -60,9 +68,15 @@
 		"test:ci": "node --test \"tests/**/*.test.ts\"",
 		"test:test-addon": "npm run build:test-addon && node --test \"test-addon/**/*.test.ts\""
 	},
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/node-3d/addon-tools.git"
+	"devDependencies": {
+		"@rslib/core": "0.23.2",
+		"@types/node": "24.13.2",
+		"@typescript/native-preview": "7.0.0-dev.20260704.1",
+		"node-addon-api": "8.9.0",
+		"oxfmt": "0.57.0",
+		"oxlint": "1.72.0",
+		"tslib": "2.8.1",
+		"typescript": "6.0.3"
 	},
 	"peerDependencies": {
 		"node-addon-api": "8.9.0"
@@ -72,21 +86,8 @@
 			"optional": true
 		}
 	},
-	"devDependencies": {
-		"@rslib/core": "0.23.2",
-		"@types/node": "24.13.2",
-		"@typescript/native-preview": "7.0.0-dev.20260704.1",
-		"node-addon-api": "8.9.0",
-		"oxlint": "1.72.0",
-		"oxfmt": "0.57.0",
-		"typescript": "6.0.3"
-	},
-	"type": "module",
-	"bugs": {
-		"url": "https://github.com/node-3d/node-3d/issues"
-	},
-	"homepage": "https://github.com/node-3d/node-3d#readme",
-	"publishConfig": {
-		"access": "public"
+	"engines": {
+		"node": ">=24.13.0",
+		"npm": ">=11.6.2"
 	}
 }
