@@ -7,3 +7,6 @@ node_modules/
 test-addon/build/
 bin-*/
 *.log
+dist/
+.rslib/
+*.tgz
