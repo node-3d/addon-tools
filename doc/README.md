@@ -27,7 +27,7 @@ For **GYP**, the include directory is accessible with:
 Console logging and "global" logging helpers for C++ side are available:
 
 Global logging expects a named logger to be created from JS side.
-See JS Utils section in [README](/README.md).
+See JS Utils section in [README](../README.md).
 
 ```js
 	// to `console` by default

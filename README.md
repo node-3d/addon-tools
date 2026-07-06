@@ -14,14 +14,14 @@ npm install @node-3d/addon-tools
 Addon Tools provide build-time and run-time helpers for Node.js C++ addons.
 - C++ shortcuts to replace repetitive code in method/class
 declaration and commonly used calls (such as `console.log`).
-- JS helpers to deliver the precompiled addons to end-users during NPM install.
+- JS helpers to deliver the precompiled addons to end-users during npm install.
 - Common Logger for both C++ and JS sides with additional control,
 compared to native (`printf/cout`) and console logging.
 
 ## include/addon-tools.hpp
 
 Macros and helpers for C++ addons using **NAPI**.
-See more detailed [docs here](/doc).
+See more detailed [docs here](doc).
 
 Example of a C++ method definition using Addon Tools:
 
@@ -149,7 +149,7 @@ to `./bin-windows/glfw.node`, but each platform uses a different folder.
 ### Example of `cpcpplint` in **cpplint.yml**:
 
 Since all my addons use the same codestyle, I don't keep
-copies of the [CPPLINT config](/utils/CPPLINT.cfg) in
+copies of the [CPPLINT config](utils/CPPLINT.cfg) in
 every addon. If that same config fits for you,
 here's how it can be used:
 
