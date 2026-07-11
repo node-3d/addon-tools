@@ -58,14 +58,14 @@
 		"build:ci": "rslib build",
 		"build:watch": "rslib build --watch",
 		"build:test-addon": "cd test-addon && node-gyp rebuild -j max --silent",
-		"lint:ts": "tsgo -p tsconfig.test.json --noEmit",
+		"lint:ts": "tsgo -p tsconfig.json --noEmit",
 		"lint:oxlint": "oxlint .",
 		"format:ts": "oxfmt -c ./oxfmt.config.ts --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
 		"format:ci": "oxfmt -c ./oxfmt.config.ts --check --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
 		"lint:all": "npm run lint:ts && npm run lint:oxlint",
 		"prepare": "npm run build:ci",
-		"test:watch": "node --test --watch \"tests/**/*.test.ts\"",
-		"test:ci": "node --test \"tests/**/*.test.ts\"",
+		"test:watch": "node --test --watch \"ts/**/*.test.ts\"",
+		"test:ci": "node --test \"ts/**/*.test.ts\"",
 		"test:test-addon": "npm run build:test-addon && node --test \"test-addon/**/*.test.ts\""
 	},
 	"devDependencies": {

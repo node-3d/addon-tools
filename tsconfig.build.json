@@ -1,5 +1,11 @@
 {
 	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"rootDir": "ts"
+	},
+	"include": [
+		"ts/**/*.ts"
+	],
 	"exclude": [
 		"ts/utils/oxlint.ts",
 		"ts/utils/oxfmt.ts"

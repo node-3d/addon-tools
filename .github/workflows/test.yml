@@ -41,3 +41,64 @@ jobs:
 
       - name: Run Unit Tests
         run: npm run test:ci
+
+  native-addon-tests:
+    name: Native Addon (${{ matrix.target }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: windows-x64
+            os: windows-2022
+            node_arch: x64
+            archflags: ''
+          - target: linux-x64
+            os: ubuntu-latest
+            node_arch: x64
+            archflags: ''
+          - target: linux-arm64
+            os: ubuntu-24.04-arm
+            node_arch: arm64
+            archflags: ''
+          - target: darwin-x64
+            os: macos-26
+            node_arch: x64
+            archflags: '-arch x86_64'
+          - target: darwin-arm64
+            os: macos-26
+            node_arch: arm64
+            archflags: '-arch arm64'
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+
+      - name: Fetch Repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24.13.0
+          architecture: ${{ matrix.node_arch }}
+          cache: 'npm'
+
+      - name: Print Native Target
+        run: |
+          echo "runner=$(uname -s)-$(uname -m)"
+          node -p "'node=' + process.version + ' platform=' + process.platform + ' arch=' + process.arch"
+          npm config get arch
+
+      - name: Install Modules
+        run: npm ci --ignore-scripts
+
+      - name: Build Package
+        run: npm run build:ci
+
+      - name: Run Native Addon Tests
+        run: npm run test:test-addon
+        env:
+          npm_config_arch: ${{ matrix.node_arch }}
+          ARCHFLAGS: ${{ matrix.archflags }}

@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { download } from '../ts/index.ts';
+import { download } from '../index.ts';
 
 const url = 'https://raw.githubusercontent.com/node-3d/image/refs/tags/4.3.0/test/freeimage.jpg';
 

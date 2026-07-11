@@ -9,7 +9,7 @@
 		"declaration": true,
 		"declarationMap": false,
 		"sourceMap": false,
-		"rootDir": "ts",
+		"rootDir": ".",
 		"outDir": "dist",
 		"verbatimModuleSyntax": true,
 		"exactOptionalPropertyTypes": true,
@@ -20,6 +20,8 @@
 		]
 	},
 	"include": [
-		"ts/**/*.ts"
+		"*.ts",
+		"ts/**/*.ts",
+		"test-addon/**/*.ts"
 	]
 }

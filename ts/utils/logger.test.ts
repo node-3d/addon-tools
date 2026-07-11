@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import * as utils from '../ts/index.ts';
+import * as utils from '../index.ts';
 
 describe('AT / Logger', () => {
 	let logged = '';

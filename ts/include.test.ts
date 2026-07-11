@@ -1,7 +1,7 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import * as tools from '../ts/index.ts';
+import * as tools from './index.ts';
 
 describe('AT / Include', () => {
 	const stringMethods = ['getBin', 'getPlatform', 'getInclude'] as const;
