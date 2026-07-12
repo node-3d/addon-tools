@@ -18,6 +18,7 @@ export default defineConfig({
 					'utils/action-pack': ['./ts/utils/action-pack.ts'],
 					'utils/check-gypi': ['./ts/utils/check-gypi.ts'],
 					'utils/cpbin': ['./ts/utils/cpbin.ts'],
+					'utils/cpclangformat': ['./ts/utils/cpclangformat.ts'],
 					'utils/cpcpplint': ['./ts/utils/cpcpplint.ts'],
 					'utils/download': ['./ts/utils/download.ts'],
 					'utils/files': ['./ts/utils/files.ts'],

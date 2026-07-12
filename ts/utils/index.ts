@@ -1,6 +1,7 @@
 export * from './action-pack.ts';
 export * from './check-gypi.ts';
 export * from './cpbin.ts';
+export * from './cpclangformat.ts';
 export * from './cpcpplint.ts';
 export * from './download.ts';
 export * from './files.ts';

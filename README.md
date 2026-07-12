@@ -160,6 +160,17 @@ here's how it can be used:
     cpplint --recursive ./src/cpp
 ```
 
+### Example of `cpclangformat` in **package.json :: scripts**:
+
+Since all my addons use the same C++ formatting style, I don't keep
+copies of the [.clang-format config](utils/.clang-format) in every addon.
+If that same config fits for you, here's how it can be used:
+
+```json
+"format:src": "node -e \"import('@node-3d/addon-tools').then((m) => m.cpclangformat())\" && clang-format -i \"src/cpp/**/*.{cpp,hpp}\"",
+"format:src:ci": "node -e \"import('@node-3d/addon-tools').then((m) => m.cpclangformat())\" && clang-format --dry-run --Werror \"src/cpp/**/*.{cpp,hpp}\""
+```
+
 ### Example of `install` in **install.js**:
 
 Downloads the addon (for example, from GitHub releases) and places
@@ -195,6 +206,7 @@ The public JS helpers are:
   `node-addon-api`.
 * `cpbin(name)` - copy `src/build/Release/<name>.node` into the platform `bin-*` directory.
 * `cpcpplint()` - copy the shared `CPPLINT.cfg` into the current directory.
+* `cpclangformat()` - copy the shared `.clang-format` into the current directory.
 * `checkGypi(path?)` - verify a local `common.gypi` matches the shared one.
 * `install(folderUrl)` - download and unpack `<platform>.gz` into the current platform bin dir.
 * `download(url)` - fetch a URL into a `Buffer`.

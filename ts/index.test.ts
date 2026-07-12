@@ -7,6 +7,7 @@ describe('AT / Util Exports', () => {
 	const methods = [
 		'install',
 		'cpbin',
+		'cpclangformat',
 		'download',
 		'copy',
 		'exists',
