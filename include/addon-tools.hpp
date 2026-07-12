@@ -19,7 +19,7 @@ inline const char* strcasestr_crossplatform(
 	if (*needle == '\0') {
 		return haystack;
 	}
-	
+
 	for (const char *h = haystack; *h != '\0'; ++h) {
 		const char *hs = h;
 		const char *ns = needle;
@@ -31,7 +31,7 @@ inline const char* strcasestr_crossplatform(
 			return h;
 		}
 	}
-	
+
 	return nullptr;
 }
 #else
@@ -269,7 +269,7 @@ inline const char* strcasestr_crossplatform(
 	CHECK_LET_ARG(I, IsObject(), "Object");                                   \
 	Napi::Object VAR = IS_ARG_EMPTY(I) ? (DEF) : info[I].As<Napi::Object>();
 
-#define LET_OBJ_ARG(I, VAR) USE_OBJ_ARG(I, VAR, Napi::Object::New(env))
+#define LET_OBJ_ARG(I, VAR) USE_OBJ_ARG(I, VAR, JS_OBJECT)
 
 
 #define REQ_ARRV_ARG(I, VAR)                                                  \
@@ -290,7 +290,7 @@ inline const char* strcasestr_crossplatform(
 	CHECK_LET_ARG(I, IsArray(), "Array");                                     \
 	Napi::Array VAR = IS_ARG_EMPTY(I) ? (DEF) : info[I].As<Napi::Array>();
 
-#define LET_ARRAY_ARG(I, VAR) USE_ARRAY_ARG(I, VAR, Napi::Array::New(env))
+#define LET_ARRAY_ARG(I, VAR) USE_ARRAY_ARG(I, VAR, JS_ARRAY)
 
 
 inline std::vector<std::string> arrayStrToVec(const Napi::Array &arr) {
@@ -326,7 +326,7 @@ inline Napi::Array vecStrToArray(Napi::Env env, const std::vector<std::string> &
 
 
 #define LET_ARRAY_STR_ARG(I, VAR)                                             \
-	USE_ARRAY_ARG(I, __ARRAY_ ## VAR, Napi::Array::New(env));                 \
+	USE_ARRAY_ARG(I, __ARRAY_ ## VAR, JS_ARRAY);                 \
 	std::vector<std::string> VAR = arrayStrToVec(__ARRAY_ ## VAR);
 
 
@@ -468,12 +468,12 @@ inline Type* getArrayData(
 ) {
 	using ValueType = std::remove_cv_t<Type>;
 	using ByteType = std::conditional_t<std::is_const_v<Type>, const uint8_t, uint8_t>;
-	
+
 	Type *out = nullptr;
 	if (num) {
 		*num = 0;
 	}
-	
+
 	if (obj.IsTypedArray()) {
 		Napi::TypedArray ta = obj.As<Napi::TypedArray>();
 		size_t offset = ta.ByteOffset();
@@ -526,7 +526,7 @@ inline Type* getArrayData(
 	} else {
 		JS_THROW("Argument must be of type `TypedArray`.");
 	}
-	
+
 	return out;
 }
 
@@ -539,16 +539,16 @@ inline Type* getBufferData(
 ) {
 	using ValueType = std::remove_cv_t<Type>;
 	using ByteType = std::conditional_t<std::is_const_v<Type>, const uint8_t, uint8_t>;
-	
+
 	if (num) {
 		*num = 0;
 	}
-	
+
 	if (!obj.IsBuffer()) {
 		JS_THROW("Argument must be of type `Buffer`.");
 		return nullptr;
 	}
-	
+
 	Napi::Buffer<uint8_t> arr = obj.As< Napi::Buffer<uint8_t> >();
 	size_t byteLength = arr.Length();
 	if (byteLength > 0 && byteLength < sizeof(ValueType)) {
@@ -584,7 +584,7 @@ inline Type *getData(
 	if (num) {
 		*num = 0;
 	}
-	
+
 	if (obj.IsTypedArray() || obj.IsArrayBuffer()) {
 		out = getArrayData<Type>(env, obj, num);
 	} else if (obj.IsBuffer()) {
@@ -603,7 +603,7 @@ inline Type *getData(
 		if (!hasData) {
 			return nullptr;
 		}
-		
+
 		napi_value rawData;
 		napi_status getStatus = napi_get_named_property(
 			env, obj, "data", &rawData
@@ -614,7 +614,7 @@ inline Type *getData(
 			}
 			return nullptr;
 		}
-		
+
 		Napi::Value dataValue(env, rawData);
 		if (
 			dataValue.IsTypedArray() ||
@@ -629,7 +629,7 @@ inline Type *getData(
 			}
 		}
 	}
-	
+
 	return out;
 }
 
@@ -696,18 +696,18 @@ inline void eventEmit(
 	if (!that.Has("emit")) {
 		return;
 	}
-	
+
 	Napi::Env env = that.Env();
-	
+
 	Napi::String eventName = JS_STR(name);
 	Napi::Function thatEmit = that.Get("emit").As<Napi::Function>();
-	
+
 	std::vector<napi_value> args;
 	args.push_back(napi_value(eventName));
 	for (int32_t i = 0; i < argc; i++) {
 		args.push_back(napi_value(argv[i]));
 	}
-	
+
 	if (context) {
 		thatEmit.MakeCallback(that, args, context);
 	} else {
@@ -888,7 +888,7 @@ private:                                                                      \
 	napi_value CLASS::_createEs5(napi_env env, napi_callback_info i) {        \
 		Napi::CallbackInfo info(env, i);                                      \
 		CLASS *instance = new CLASS(info);                                    \
-		Napi::Object wrapObj = Napi::Object::New(env);                        \
+		Napi::Object wrapObj = JS_OBJECT;                                     \
 		info.This().As<Napi::Object>().Set(_nameEs5, wrapObj);                \
 		napi_wrap(env, wrapObj, instance, _finalizeEs5, nullptr, nullptr);    \
 		return info.Env().Undefined();                                        \
