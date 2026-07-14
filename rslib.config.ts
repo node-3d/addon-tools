@@ -25,6 +25,8 @@ export default defineConfig({
 					'utils/index': ['./ts/utils/index.ts'],
 					'utils/install': ['./ts/utils/install.ts'],
 					'utils/logger': ['./ts/utils/logger.ts'],
+					'utils/oxfmt': ['./ts/utils/oxfmt.ts'],
+					'utils/oxlint': ['./ts/utils/oxlint.ts'],
 				},
 				tsconfigPath: './tsconfig.build.json',
 			},

@@ -26,8 +26,6 @@
 	},
 	"files": [
 		"dist",
-		"ts/utils/oxlint.ts",
-		"ts/utils/oxfmt.ts",
 		"include",
 		"utils",
 		"LICENSE",
@@ -43,12 +41,12 @@
 			"default": "./dist/index.js"
 		},
 		"./oxlint": {
-			"types": "./ts/utils/oxlint.ts",
-			"default": "./ts/utils/oxlint.ts"
+			"types": "./dist/utils/oxlint.d.ts",
+			"default": "./dist/utils/oxlint.js"
 		},
 		"./oxfmt": {
-			"types": "./ts/utils/oxfmt.ts",
-			"default": "./ts/utils/oxfmt.ts"
+			"types": "./dist/utils/oxfmt.d.ts",
+			"default": "./dist/utils/oxfmt.js"
 		}
 	},
 	"publishConfig": {
@@ -80,10 +78,18 @@
 		"typescript": "6.0.3"
 	},
 	"peerDependencies": {
-		"node-addon-api": "8.9.0"
+		"node-addon-api": "8.9.0",
+		"oxfmt": "0.57.0",
+		"oxlint": "1.72.0"
 	},
 	"peerDependenciesMeta": {
 		"node-addon-api": {
+			"optional": true
+		},
+		"oxfmt": {
+			"optional": true
+		},
+		"oxlint": {
 			"optional": true
 		}
 	},

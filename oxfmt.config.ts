@@ -1,1 +1,1 @@
-export { default } from '@node-3d/addon-tools/oxfmt';
+export { default } from './ts/utils/oxfmt.ts';
