@@ -5,13 +5,19 @@ import { exists, getBin, getPlatform, install } from '../index.ts';
 
 const prefix = 'https://github.com/node-3d/segfault/releases/download';
 const tag = '2.3.0';
-const isOSX = getPlatform() === 'osx';
+const platform = getPlatform();
+const unsupportedPlatforms = new Set(['osx', 'win32-arm64']);
+const skipInstallFixture = unsupportedPlatforms.has(platform);
 
 describe(
 	'AT / Install',
-	{ skip: isOSX ? 'segfault osx binary is not available in this CI path' : false },
+	{
+		skip: skipInstallFixture
+			? `segfault ${platform} binary is not available in this fixture release`
+			: false,
+	},
 	async () => {
-		if (isOSX) {
+		if (skipInstallFixture) {
 			return;
 		}
 
