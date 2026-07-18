@@ -1,41 +1,26 @@
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
-import { exists, getBin, getPlatform, install } from '../index.ts';
+import { exists, getBin, install } from '../index.ts';
 
 const prefix = 'https://github.com/node-3d/segfault/releases/download';
-const tag = '2.3.0';
-const platform = getPlatform();
-const unsupportedPlatforms = new Set(['osx', 'win32-arm64']);
-const skipInstallFixture = unsupportedPlatforms.has(platform);
+const tag = '4.0.0';
 
-describe(
-	'AT / Install',
-	{
-		skip: skipInstallFixture
-			? `segfault ${platform} binary is not available in this fixture release`
-			: false,
-	},
-	async () => {
-		if (skipInstallFixture) {
-			return;
-		}
+describe('AT / Install', async () => {
+	const status = await install(`${prefix}/${tag}`);
+	const rootPath = `${import.meta.dirname}/../..`;
 
-		const status = await install(`${prefix}/${tag}`);
-		const rootPath = `${import.meta.dirname}/../..`;
+	it('status is true', () => {
+		assert.strictEqual(status, true);
+	});
 
-		it('status is true', () => {
-			assert.strictEqual(status, true);
-		});
+	it('platform folder exists', async () => {
+		const isFolderCreated = await exists(`${rootPath}/${getBin()}`);
+		assert.strictEqual(isFolderCreated, true);
+	});
 
-		it('platform folder exists', async () => {
-			const isFolderCreated = await exists(`${rootPath}/${getBin()}`);
-			assert.strictEqual(isFolderCreated, true);
-		});
-
-		it('platform binary exists', async () => {
-			const isAddonAvailable = await exists(`${rootPath}/${getBin()}/segfault.node`);
-			assert.strictEqual(isAddonAvailable, true);
-		});
-	},
-);
+	it('platform binary exists', async () => {
+		const isAddonAvailable = await exists(`${rootPath}/${getBin()}/segfault.node`);
+		assert.strictEqual(isAddonAvailable, true);
+	});
+});
