@@ -61,7 +61,7 @@
 		"format:ts": "oxfmt -c ./oxfmt.config.ts --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
 		"format:ts:ci": "oxfmt -c ./oxfmt.config.ts --check --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
 		"lint:all": "npm run lint:ts && npm run lint:oxlint",
-		"prepare": "npm run build:ci",
+		"prepack": "npm run build:ci",
 		"test:watch": "node --test --watch \"ts/**/*.test.ts\"",
 		"test:ci": "node --test \"ts/**/*.test.ts\"",
 		"test:test-addon": "npm run build:test-addon && node --test \"test-addon/**/*.test.ts\""
