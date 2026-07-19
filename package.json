@@ -1,6 +1,6 @@
 {
 	"name": "@node-3d/addon-tools",
-	"version": "10.0.1",
+	"version": "10.0.2",
 	"description": "Helpers for Node.js addons and dependency packages",
 	"keywords": [
 		"addon",
@@ -56,7 +56,7 @@
 		"build:ci": "rslib build",
 		"build:watch": "rslib build --watch",
 		"build:test-addon": "cd test-addon && node-gyp rebuild -j max --silent",
-		"lint:ts": "tsgo -p tsconfig.json --noEmit",
+		"lint:ts": "tsc -p tsconfig.json --noEmit",
 		"lint:oxlint": "oxlint .",
 		"format:ts": "oxfmt -c ./oxfmt.config.ts --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
 		"format:ts:ci": "oxfmt -c ./oxfmt.config.ts --check --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
@@ -69,27 +69,18 @@
 	"devDependencies": {
 		"@rslib/core": "0.23.2",
 		"@types/node": "24.13.2",
-		"@typescript/native-preview": "7.0.0-dev.20260704.1",
 		"clang-format-node": "3.0.7",
 		"node-addon-api": "8.9.0",
 		"oxfmt": "0.57.0",
 		"oxlint": "1.72.0",
 		"tslib": "2.8.1",
-		"typescript": "6.0.3"
+		"typescript": "7.0.2"
 	},
 	"peerDependencies": {
-		"node-addon-api": "8.9.0",
-		"oxfmt": "0.57.0",
-		"oxlint": "1.72.0"
+		"node-addon-api": "^8.9.0"
 	},
 	"peerDependenciesMeta": {
 		"node-addon-api": {
-			"optional": true
-		},
-		"oxfmt": {
-			"optional": true
-		},
-		"oxlint": {
 			"optional": true
 		}
 	},
