@@ -7,7 +7,7 @@ This is a part of [Node3D](https://github.com/node-3d) project.
 [![Test](https://github.com/node-3d/addon-tools/actions/workflows/test.yml/badge.svg)](https://github.com/node-3d/addon-tools/actions/workflows/test.yml)
 [![Cpplint](https://github.com/node-3d/addon-tools/actions/workflows/cpplint.yml/badge.svg)](https://github.com/node-3d/addon-tools/actions/workflows/cpplint.yml)
 
-```console
+```bash
 npm install @node-3d/addon-tools
 ```
 
