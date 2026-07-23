@@ -12,7 +12,7 @@ const platformNames: Readonly<Record<string, string>> = {
 };
 
 const platformName = platformNames[platformAndArch] || platformAndArch;
-const isWindows = platformName === nameWindows;
+const isWindows = process.platform === 'win32';
 
 type TAddonPaths = { bin: string; include: string };
 
