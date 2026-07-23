@@ -55,7 +55,7 @@
 	"scripts": {
 		"build:ci": "rslib build",
 		"build:watch": "rslib build --watch",
-		"build:test-addon": "cd test-addon && node-gyp rebuild -j max --silent",
+		"build:test-addon": "npm run build:ci && cd test-addon && node-gyp rebuild -j max --silent",
 		"lint:ts": "tsc -p tsconfig.json --noEmit",
 		"lint:oxlint": "oxlint .",
 		"format:ts": "oxfmt -c ./oxfmt.config.ts --no-error-on-unmatched-pattern \"**/*.{js,jsx,ts,tsx}\"",
