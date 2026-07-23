@@ -9,4 +9,5 @@ bin-*/
 *.log
 dist/
 .rslib/
+CPPLINT.cfg
 *.tgz
