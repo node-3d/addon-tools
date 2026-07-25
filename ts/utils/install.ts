@@ -10,7 +10,7 @@ const logger = getLogger('addon-tools');
 
 const download = async (url: string) => {
 	const { stderr } = await exec(
-		['curl -sL -o', `${getBin()}/${getPlatform()}.gz`, url].join(' '),
+		['curl -fsSL -o', `${getBin()}/${getPlatform()}.gz`, url].join(' '),
 	);
 	if (stderr) {
 		logger.warn(stderr);
@@ -44,7 +44,8 @@ export const install = async (folderUrl: string): Promise<boolean> => {
 	} catch (error) {
 		logger.warn(error);
 		return false;
+	} finally {
+		await rm(gzPath).catch((error: unknown) => logger.warn(error));
 	}
-	await rm(gzPath);
 	return true;
 };
