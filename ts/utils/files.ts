@@ -42,7 +42,7 @@ export const subfiles = async (name: string): Promise<string[]> => {
 export const traverse = async (name: string, showDirs = false): Promise<string[]> => {
 	const subdirNames = await subdirs(name);
 	const dirs = subdirNames.map((dir) => `${name}/${dir}`);
-	const nestedItems = await Promise.all(dirs.map((dir) => traverse(dir, showDirs)));
+	const nestedItems = await Promise.all(dirs.map(async (dir) => traverse(dir, showDirs)));
 	const nested = nestedItems.flat();
 	const files = await subfiles(name);
 	return [...(showDirs ? dirs : []), ...nested, ...files];

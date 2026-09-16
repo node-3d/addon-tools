@@ -11,7 +11,7 @@ const platformNames: Readonly<Record<string, string>> = {
 	'linux-arm64': 'aarch64',
 };
 
-const platformName = platformNames[platformAndArch] || platformAndArch;
+const platformName = platformNames[platformAndArch] ?? platformAndArch;
 const isWindows = process.platform === 'win32';
 
 type TAddonPaths = { bin: string; include: string };
@@ -23,7 +23,7 @@ export const getPaths = (dir: string): TAddonPaths => {
 
 	if (isWindows) {
 		// oxlint-disable-next-line node/no-process-env
-		process.env.path = `${bin};${process.env.path ? `${process.env.path}` : ''}`;
+		process.env.path = `${bin};${process.env.path ?? ''}`;
 	}
 
 	return { bin, include };

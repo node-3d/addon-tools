@@ -6,6 +6,7 @@ import { getBin, getPlatform } from '../include.ts';
 import { exists, rm, rmdir } from './files.ts';
 import { getLogger } from './logger.ts';
 
+// oxlint-disable-next-line typescript/strict-void-return
 const execFile = promisify(execFileCallback);
 const logger = getLogger('addon-tools');
 const ONE_SECOND_MS = 1000;

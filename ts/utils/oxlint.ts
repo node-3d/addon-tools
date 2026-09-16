@@ -12,20 +12,11 @@ export default defineConfig({
 		nursery: 'error',
 	},
 	ignorePatterns: ['**/dist/**', '**/*.d.ts'],
+	options: {
+		typeAware: true,
+	},
 	//#region Overrides
 	overrides: [
-		{
-			files: ['**/*.test.*', '**/test/**/*', '**/tests/**/*', '**/test-addon/**/*'],
-			rules: {
-				'eslint/no-console': 'off',
-				'eslint/max-lines-per-function': 'off',
-				'eslint/max-lines': 'off',
-				'eslint/no-magic-numbers': 'off',
-				'eslint/max-statements': 'off',
-				'node/no-sync': 'off',
-				'unicorn/no-useless-undefined': 'off',
-			},
-		},
 		{
 			files: ['**/ts/native.ts'],
 			rules: {
@@ -33,12 +24,52 @@ export default defineConfig({
 			},
 		},
 		{
-			files: ['**/src/build-*', '**/examples/**/*'],
+			files: [
+				'**/*.test.*',
+				'**/test/**/*',
+				'**/tests/**/*',
+				'**/test-addon/**/*',
+				'**/src/**/*', // build helper scripts
+				'**/examples/**/*',
+				'**/scripts/**/*',
+				'**/install.js',
+			],
 			rules: {
 				'eslint/no-console': 'off',
 				'eslint/no-magic-numbers': 'off',
 				'node/no-sync': 'off',
+				'node/no-top-level-await': 'off',
+				'typescript/no-floating-promises': 'off',
+				'typescript/no-unnecessary-condition': 'off',
+			},
+		},
+		{
+			files: ['**/*.test.*', '**/test/**/*', '**/tests/**/*', '**/test-addon/**/*'],
+			rules: {
+				'eslint/max-lines-per-function': 'off',
+				'eslint/max-lines': 'off',
+				'eslint/max-statements': 'off',
+				'unicorn/no-useless-undefined': 'off',
+				'eslint/no-underscore-dangle': 'off',
+				'typescript/no-unnecessary-boolean-literal-compare': 'off',
+			},
+		},
+		{
+			files: ['**/src/build-*', '**/examples/**/*'],
+			rules: {
 				'unicorn/no-process-exit': 'off',
+			},
+		},
+		{
+			files: ['**/*.js', '**/*.mjs'],
+			rules: {
+				'typescript/no-unsafe-argument': 'off',
+				'typescript/no-unsafe-assignment': 'off',
+				'typescript/no-unsafe-call': 'off',
+				'typescript/no-unsafe-member-access': 'off',
+				'typescript/no-unsafe-return': 'off',
+				'typescript/prefer-nullish-coalescing': 'off',
+				'unicorn/numeric-separators-style': 'off',
 			},
 		},
 	],
@@ -60,11 +91,13 @@ export default defineConfig({
 		'eslint/no-undefined': 'off',
 		'eslint/no-useless-assignment': 'off',
 		'eslint/no-warning-comments': 'off',
+		'eslint/one-var': 'off',
 		'eslint/prefer-destructuring': 'off',
 		'eslint/prefer-named-capture-group': 'off',
 		'eslint/sort-imports': 'off',
 		'eslint/sort-keys': 'off',
 		'eslint/sort-vars': 'off',
+		'require-await': 'off',
 		'import/exports-last': 'off',
 		'import/group-exports': 'off',
 		'import/no-anonymous-default-export': 'off',
@@ -76,6 +109,7 @@ export default defineConfig({
 		'import/no-nodejs-modules': 'off',
 		'import/no-relative-parent-imports': 'off',
 		'import/no-unassigned-import': 'off',
+		'import/namespace': 'off',
 		'import/prefer-default-export': 'off',
 		'import/unambiguous': 'off',
 		'jsdoc/no-defaults': 'off',
@@ -94,17 +128,21 @@ export default defineConfig({
 		'typescript/class-literal-property-style': 'off',
 		'typescript/explicit-function-return-type': 'off',
 		'typescript/no-inferrable-types': 'off',
+		'typescript/no-unsafe-type-assertion': 'off',
+		'typescript/prefer-readonly-parameter-types': 'off',
+		'typescript/prefer-return-this-type': 'off',
+		'typescript/require-await': 'off',
+		'typescript/strict-boolean-expressions': 'off',
+		'typescript/unbound-method': 'off',
+		'unicorn/explicit-length-check': 'off',
 		'unicorn/import-style': 'off',
-		'unicorn/no-null': 'off',
-		'unicorn/no-this-assignment': 'off',
 		'unicorn/no-zero-fractions': 'off',
+		'unicorn/no-null': 'off',
 		'unicorn/number-literal-case': 'off',
-		'unicorn/numeric-separators-style': 'off',
+		'unicorn/prefer-number-coercion': 'off',
 		'unicorn/prefer-dom-node-append': 'off',
 		'unicorn/prefer-event-target': 'off',
 		'unicorn/prefer-global-this': 'off',
-		'unicorn/prefer-number-coercion': 'off',
-		'unicorn/prefer-query-selector': 'off',
 		//#endregion Unwanted
 
 		//#region Customized
@@ -129,6 +167,17 @@ export default defineConfig({
 		'eslint/no-underscore-dangle': ['error', { allowAfterThis: true }],
 		'promise/param-names': ['error', { resolvePattern: '^res$', rejectPattern: '^rej$' }],
 		'typescript/consistent-type-definitions': ['error', 'type'],
+		'typescript/prefer-nullish-coalescing': ['error', { ignoreMixedLogicalExpressions: true }],
+		'typescript/no-confusing-void-expression': [
+			'error',
+			{ ignoreVoidReturningFunctions: true, ignoreArrowShorthand: true },
+		],
+		'typescript/no-floating-promises': ['error', { ignoreIIFE: true }],
+		'unicorn/numeric-separators-style': [
+			'error',
+			{ hexadecimal: { onlyIfContainsSeparator: true } },
+		],
+		'unicorn/switch-case-braces': ['error', 'avoid'],
 		//#endregion Customized
 	},
 });

@@ -4,6 +4,7 @@ import fs from 'node:fs/promises';
 import { getBin, getPlatform } from '../include.ts';
 import { getLogger } from './logger.ts';
 
+// oxlint-disable-next-line typescript/strict-void-return
 const exec = promisify(execCallback);
 const logger = getLogger('addon-tools');
 
@@ -12,7 +13,7 @@ const removeDownloadedArchives = async (binPath: string): Promise<void> => {
 	await Promise.all(
 		files
 			.filter((file) => file.endsWith('.gz'))
-			.map((file) => fs.rm(`${binPath}/${file}`, { force: true })),
+			.map(async (file) => fs.rm(`${binPath}/${file}`, { force: true })),
 	);
 };
 

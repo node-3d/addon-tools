@@ -49,7 +49,7 @@ const isLoggerLevel = (value: string): value is LoggerLevel =>
 
 const assignMethods = (logger: Logger, methods: Partial<Record<LoggerLevel, LoggerFn>>) => {
 	for (const [k, v] of Object.entries(methods)) {
-		if (isLoggerLevel(k) && v) {
+		if (isLoggerLevel(k)) {
 			logger.replace(k, v);
 		}
 	}
@@ -67,10 +67,10 @@ export const createLogger = (opts: LoggerOptions): Logger => {
 		info: console.info,
 		warn: console.warn,
 		error: console.error,
-		replace: (level: string, fn: LoggerFn) => {
+		replace: (level: string, fn: LoggerFn | null) => {
 			if (levelIdx[level]) {
 				newLogger[level as LoggerLevel] = wrapOutput(
-					fn || console.log,
+					fn ?? console.log,
 					level as LoggerLevel,
 				);
 			}
@@ -93,16 +93,14 @@ export const getLevel = (): LoggerLevelOrNull => currentLevel;
 
 export const getLoggers = (): Record<string, Logger> => ({ ...loggers });
 
-export const getLogger = (name: string): Logger => loggers[name] || createLogger({ name });
+export const getLogger = (name: string): Logger => loggers[name] ?? createLogger({ name });
 
-if (!global.AddonTools.log) {
-	global.AddonTools.log = (name, level, ...args) => {
+global.AddonTools.log ??= (name, level, ...args) => {
 		const logger = loggers[name];
 		if (!logger) {
 			return;
 		}
 		logger[level](...args);
-	};
-}
+};
 
 createLogger({ name: 'addon-tools' });
