@@ -29,9 +29,7 @@
 		"include",
 		"utils",
 		"LICENSE",
-		"tsconfig.base.json",
-		"tsconfig.json",
-		"package.json"
+		"tsconfig.base.json"
 	],
 	"type": "module",
 	"main": "dist/index.js",
@@ -55,6 +53,7 @@
 		"access": "public"
 	},
 	"scripts": {
+		"i": "npm install --workspaces=false",
 		"build:ci": "rslib build",
 		"build:watch": "rslib build --watch",
 		"build:test-addon": "npm run build:ci && cd test-addon && node-gyp rebuild -j max --silent",
