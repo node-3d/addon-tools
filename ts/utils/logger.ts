@@ -96,11 +96,11 @@ export const getLoggers = (): Record<string, Logger> => ({ ...loggers });
 export const getLogger = (name: string): Logger => loggers[name] ?? createLogger({ name });
 
 global.AddonTools.log ??= (name, level, ...args) => {
-		const logger = loggers[name];
-		if (!logger) {
-			return;
-		}
-		logger[level](...args);
+	const logger = loggers[name];
+	if (!logger) {
+		return;
+	}
+	logger[level](...args);
 };
 
 createLogger({ name: 'addon-tools' });
