@@ -194,6 +194,7 @@ JavaScript helpers for Node.js addon development. The short list of helpers:
 
 ```js
 	'getBin', 'getPlatform', 'getInclude', 'getPaths',
+	'getInstallCandidateEnvName', 'getInstallCandidateUrl',
 	'install', 'cpbin', 'download', 'copy', 'exists',
 	'ensuredir', 'subdirs', 'subfiles', 'traverse',
 	'rmdir', 'rm', 'actionPack', 'checkGypi',
@@ -208,6 +209,10 @@ The public JS helpers are:
 * `getPlatform()`, `printPlatform()` - current platform key.
 * `getInclude()`, `printInclude()` - include flags for addon-tools and optional
   `node-addon-api`.
+* `getInstallCandidateEnvName(packageName)` - derive the package-scoped environment
+  variable used to select a temporary native binary candidate.
+* `getInstallCandidateUrl(packageName)` - read that candidate URL from the current
+  environment.
 * `cpbin(name)` - copy `src/build/Release/<name>.node` into the platform `bin-*` directory.
 * `cpcpplint()` - copy the shared `CPPLINT.cfg` into the current directory.
 * `cpclangformat()` - copy the shared `.clang-format` into the current directory.
@@ -216,6 +221,61 @@ The public JS helpers are:
 * `download(url)` - fetch a URL into a `Buffer`.
 * `copy`, `exists`, `ensuredir`, `subdirs`, `subfiles`, `traverse`, `rmdir`, `rm`.
 * `actionPack()` - pack the current platform bin directory as `<platform>.gz`.
+
+### Candidate installation
+
+Native package installers can opt into a package-scoped candidate URL while leaving
+dependency installers on their normal release URLs:
+
+```js
+import packageJson from './package.json' with { type: 'json' };
+import { getInstallCandidateUrl, install } from '@node-3d/addon-tools';
+
+const releaseUrl = 'https://github.com/node-3d/example/releases/download/1.0.0';
+await install(getInstallCandidateUrl(packageJson.name) || releaseUrl);
+```
+
+For `@node-3d/steam-api`, the derived variable is
+`NODE_3D_INSTALL_NODE_3D_STEAM_API`.
+
+## GitHub Actions
+
+Repository actions provide the common artifact handoff for packed consumer checks.
+Pin external uses to an immutable addon-tools commit.
+
+Pack and upload the current npm package:
+
+```yaml
+- uses: node-3d/addon-tools/actions/npm-candidate-upload@<commit-sha>
+```
+
+Pack and upload the current platform's native binary directory:
+
+```yaml
+- uses: node-3d/addon-tools/actions/native-candidate-upload@<commit-sha>
+  with:
+    artifact-name: binary-${{ matrix.target }}
+```
+
+Install the npm artifact in an isolated temporary consumer. When `binary-artifact`
+is present, the action downloads it and exposes its directory through the derived
+package-scoped candidate variable. An optional repository fixture is copied into the
+consumer before installation.
+
+```yaml
+- id: consumer
+  uses: node-3d/addon-tools/actions/consumer-install@<commit-sha>
+  with:
+    package-name: '@node-3d/steam-api'
+    package-artifact: npm-package
+    binary-artifact: binary-${{ matrix.target }}
+    fixture: test-consumer
+
+- working-directory: ${{ steps.consumer.outputs.directory }}
+  env:
+    PACKAGE_NAME: '@node-3d/steam-api'
+  run: node -e "import(process.env.PACKAGE_NAME)"
+```
 
 ### Logger:
 

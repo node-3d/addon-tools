@@ -1,0 +1,33 @@
+name: Upload npm Candidate
+description: Pack the current npm package and upload its tarball as a workflow artifact.
+
+inputs:
+  artifact-name:
+    description: Workflow artifact name for the npm tarball.
+    required: false
+    default: npm-package
+  retention-days:
+    description: Number of days to retain the temporary artifact.
+    required: false
+    default: '1'
+
+outputs:
+  tarball:
+    description: Absolute path of the packed npm tarball.
+    value: ${{ steps.pack.outputs.tarball }}
+
+runs:
+  using: composite
+  steps:
+    - name: Pack npm Candidate
+      id: pack
+      shell: bash
+      run: node "$GITHUB_ACTION_PATH/pack.mjs"
+
+    - name: Upload npm Candidate
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ steps.pack.outputs.tarball }}
+        retention-days: ${{ inputs.retention-days }}
+        if-no-files-found: error

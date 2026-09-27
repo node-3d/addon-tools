@@ -5,6 +5,7 @@
 .project
 node_modules/
 test-addon/build/
+test-consumer/build/
 bin-*/
 *.log
 dist/

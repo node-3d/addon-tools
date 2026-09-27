@@ -1,0 +1,12 @@
+{
+	"name": "addon-tools-consumer-test",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"build": "node-gyp rebuild -j max --silent",
+		"test": "node --test"
+	},
+	"dependencies": {
+		"node-addon-api": "8.9.2"
+	}
+}

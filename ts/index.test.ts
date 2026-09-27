@@ -6,6 +6,8 @@ import * as utils from './index.ts';
 describe('AT / Util Exports', () => {
 	const methods = [
 		'install',
+		'getInstallCandidateEnvName',
+		'getInstallCandidateUrl',
 		'cpbin',
 		'cpclangformat',
 		'download',

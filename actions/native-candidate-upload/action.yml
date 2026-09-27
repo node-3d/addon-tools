@@ -1,0 +1,27 @@
+name: Upload Native Candidate
+description: Pack the current Node3D native binary and upload it as a workflow artifact.
+
+inputs:
+  artifact-name:
+    description: Workflow artifact name for the native archive.
+    required: true
+  retention-days:
+    description: Number of days to retain the temporary artifact.
+    required: false
+    default: '1'
+
+runs:
+  using: composite
+  steps:
+    - name: Pack Native Candidate
+      id: pack
+      shell: bash
+      run: node -e "import('@node-3d/addon-tools').then((m) => m.actionPack())" >> "$GITHUB_OUTPUT"
+
+    - name: Upload Native Candidate
+      uses: actions/upload-artifact@v7
+      with:
+        name: ${{ inputs.artifact-name }}
+        path: ${{ steps.pack.outputs.pack }}
+        retention-days: ${{ inputs.retention-days }}
+        if-no-files-found: error

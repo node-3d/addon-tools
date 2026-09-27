@@ -1,0 +1,56 @@
+name: Install npm Consumer Candidate
+description: Install a packed npm candidate in an isolated consumer directory.
+
+inputs:
+  package-name:
+    description: npm package name being installed.
+    required: true
+  package-artifact:
+    description: Workflow artifact containing exactly one npm tarball.
+    required: false
+    default: npm-package
+  binary-artifact:
+    description: Optional workflow artifact containing a native binary candidate.
+    required: false
+    default: ''
+  fixture:
+    description: Optional fixture directory relative to the caller repository root.
+    required: false
+    default: ''
+
+outputs:
+  directory:
+    description: Absolute path of the isolated consumer directory.
+    value: ${{ steps.prepare.outputs.directory }}
+
+runs:
+  using: composite
+  steps:
+    - name: Download npm Candidate
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ inputs.package-artifact }}
+        path: ${{ runner.temp }}/node-3d-package-candidate
+
+    - name: Download Native Candidate
+      if: inputs.binary-artifact != ''
+      uses: actions/download-artifact@v8
+      with:
+        name: ${{ inputs.binary-artifact }}
+        path: ${{ runner.temp }}/node-3d-binary-candidate
+
+    - name: Prepare Consumer
+      id: prepare
+      shell: bash
+      env:
+        NODE_3D_BINARY_ARTIFACT: ${{ inputs.binary-artifact }}
+        NODE_3D_FIXTURE: ${{ inputs.fixture }}
+        NODE_3D_PACKAGE_NAME: ${{ inputs.package-name }}
+      run: node "$GITHUB_ACTION_PATH/prepare.mjs"
+
+    - name: Install npm Candidate
+      shell: bash
+      env:
+        NODE_3D_CONSUMER_DIRECTORY: ${{ steps.prepare.outputs.directory }}
+        NODE_3D_PACKAGE_TARBALL: ${{ steps.prepare.outputs.tarball }}
+      run: node "$GITHUB_ACTION_PATH/install.mjs"

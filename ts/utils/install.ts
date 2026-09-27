@@ -11,6 +11,25 @@ const execFile = promisify(execFileCallback);
 const logger = getLogger('addon-tools');
 const ONE_SECOND_MS = 1000;
 const RETRY_DELAYS_MS = [ONE_SECOND_MS * 2, ONE_SECOND_MS * 5] as const;
+const INSTALL_CANDIDATE_ENV_PREFIX = 'NODE_3D_INSTALL_';
+
+export const getInstallCandidateEnvName = (packageName: string): string => {
+	const normalizedName = packageName
+		.replace(/^@/u, '')
+		.replaceAll(/[^a-zA-Z0-9]+/gu, '_')
+		.replaceAll(/^_+|_+$/gu, '')
+		.toUpperCase();
+
+	if (!normalizedName) {
+		throw new TypeError('packageName must contain at least one letter or number');
+	}
+
+	return `${INSTALL_CANDIDATE_ENV_PREFIX}${normalizedName}`;
+};
+
+export const getInstallCandidateUrl = (packageName: string): string | undefined =>
+	// oxlint-disable-next-line node/no-process-env
+	process.env[getInstallCandidateEnvName(packageName)];
 
 const download = async (url: string, gzPath: string) => {
 	const { stderr } = await execFile('curl', ['-fsSL', '-o', gzPath, url]);
