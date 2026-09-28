@@ -9,7 +9,7 @@ import {
 } from '@node-3d/addon-tools';
 
 const require = createRequire(import.meta.url);
-const consumer = require('./build/Release/consumer.node');
+const consumer = require('./build/Release/consumer.node') as { ping: () => number };
 
 test('packed public entry exposes install candidate helpers', () => {
 	assert.equal(typeof getPlatform(), 'string');

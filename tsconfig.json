@@ -6,7 +6,9 @@
 	},
 	"include": [
 		"*.ts",
+		"actions/**/*.ts",
 		"ts/**/*.ts",
-		"test-addon/**/*.ts"
+		"test-addon/**/*.ts",
+		"test-consumer/**/*.ts"
 	]
 }

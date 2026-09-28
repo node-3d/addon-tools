@@ -22,7 +22,7 @@ runs:
     - name: Pack npm Candidate
       id: pack
       shell: bash
-      run: node "$GITHUB_ACTION_PATH/pack.mjs"
+      run: node "$GITHUB_ACTION_PATH/pack.ts"
 
     - name: Upload npm Candidate
       uses: actions/upload-artifact@v7

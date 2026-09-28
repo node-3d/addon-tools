@@ -46,11 +46,11 @@ runs:
         NODE_3D_BINARY_ARTIFACT: ${{ inputs.binary-artifact }}
         NODE_3D_FIXTURE: ${{ inputs.fixture }}
         NODE_3D_PACKAGE_NAME: ${{ inputs.package-name }}
-      run: node "$GITHUB_ACTION_PATH/prepare.mjs"
+      run: node "$GITHUB_ACTION_PATH/prepare.ts"
 
     - name: Install npm Candidate
       shell: bash
       env:
         NODE_3D_CONSUMER_DIRECTORY: ${{ steps.prepare.outputs.directory }}
         NODE_3D_PACKAGE_TARBALL: ${{ steps.prepare.outputs.tarball }}
-      run: node "$GITHUB_ACTION_PATH/install.mjs"
+      run: node "$GITHUB_ACTION_PATH/install.ts"

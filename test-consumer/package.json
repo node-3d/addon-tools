@@ -4,7 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"build": "node-gyp rebuild -j max --silent",
-		"test": "node --test"
+		"test": "node --test \"*.test.ts\""
 	},
 	"dependencies": {
 		"node-addon-api": "8.9.2"
