@@ -8,7 +8,6 @@
 		"*.ts",
 		"actions/**/*.ts",
 		"ts/**/*.ts",
-		"test-addon/**/*.ts",
-		"test-consumer/**/*.ts"
+		"test-addon/**/*.ts"
 	]
 }

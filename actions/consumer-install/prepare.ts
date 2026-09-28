@@ -20,6 +20,7 @@ const runnerTemp = environment.RUNNER_TEMP ?? tmpdir();
 const consumerDirectory = path.join(runnerTemp, 'node-3d-consumer');
 const packageDirectory = path.join(runnerTemp, 'node-3d-package-candidate');
 const binaryDirectory = path.join(runnerTemp, 'node-3d-binary-candidate');
+const repositoryConsumerConfig = 'tsconfig.json';
 
 const main = async () => {
 	await rm(consumerDirectory, { force: true, recursive: true });
@@ -31,6 +32,7 @@ const main = async () => {
 			environment.NODE_3D_FIXTURE,
 		);
 		await cp(fixtureDirectory, consumerDirectory, { recursive: true });
+		await rm(path.join(consumerDirectory, repositoryConsumerConfig), { force: true });
 	}
 
 	const packageJsonPath = path.join(consumerDirectory, 'package.json');

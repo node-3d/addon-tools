@@ -1,0 +1,10 @@
+{
+	"extends": "../tsconfig.base.json",
+	"compilerOptions": {
+		"noEmit": true,
+		"paths": {
+			"@node-3d/addon-tools": ["../ts/index.ts"]
+		}
+	},
+	"include": ["*.ts"]
+}
