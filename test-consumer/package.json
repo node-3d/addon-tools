@@ -8,5 +8,8 @@
 	},
 	"dependencies": {
 		"node-addon-api": "8.9.2"
+	},
+	"devDependencies": {
+		"node-gyp": "12.4.0"
 	}
 }

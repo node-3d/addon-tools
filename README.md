@@ -142,8 +142,8 @@ Copy the addon file, for example, from `./src/build/Release/glfw.node`
 to `./bin-windows/glfw.node`, but each platform uses a different folder.
 
 ```json
-"build": "cd src && node-gyp rebuild -j max --silent && node -e \"import('@node-3d/addon-tools').then((m) => m.cpbin('glfw'))\"",
-"build-only": "cd src && node-gyp build -j max --silent && node -e \"import('@node-3d/addon-tools').then((m) => m.cpbin('glfw'))\"",
+"build": "cd src && node-gyp rebuild -j max && node -e \"import('@node-3d/addon-tools').then((m) => m.cpbin('glfw'))\"",
+"build-only": "cd src && node-gyp build -j max && node -e \"import('@node-3d/addon-tools').then((m) => m.cpbin('glfw'))\"",
 ```
 
 ### Example of `cpcpplint` in **cpplint.yml**:
